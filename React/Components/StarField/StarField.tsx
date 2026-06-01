@@ -9,6 +9,11 @@ interface Star {
 	phase: number;
 }
 
+interface ConstellationEdge {
+	a: number;
+	b: number;
+}
+
 interface ShootingStar {
 	x: number;
 	y: number;
@@ -94,6 +99,7 @@ const StarField = () => {
 		let animationId: number;
 		let frame = 0;
 		const stars: Star[] = [];
+		const constellationEdges: ConstellationEdge[] = [];
 		let shootingStar: ShootingStar | null = null;
 		let nextShootingStarFrame = 300 + Math.random() * 300;
 
@@ -101,6 +107,7 @@ const StarField = () => {
 			canvas.width = canvas.offsetWidth;
 			canvas.height = canvas.offsetHeight;
 			initStars();
+			buildConstellations();
 		};
 
 		const initStars = () => {
@@ -115,6 +122,30 @@ const StarField = () => {
 					twinkleSpeed: Math.random() * 0.015 + 0.003,
 					phase: Math.random() * Math.PI * 2,
 				});
+			}
+		};
+
+		const buildConstellations = () => {
+			constellationEdges.length = 0;
+			const maxDist = Math.min(canvas.width, canvas.height) * 0.18;
+			const edgeSet = new Set<string>();
+			for (let i = 0; i < stars.length; i++) {
+				const nearest: { idx: number; d: number }[] = [];
+				for (let j = 0; j < stars.length; j++) {
+					if (i === j) continue;
+					const dx = stars[i].x - stars[j].x;
+					const dy = stars[i].y - stars[j].y;
+					const d = Math.sqrt(dx * dx + dy * dy);
+					if (d < maxDist) nearest.push({ idx: j, d });
+				}
+				nearest.sort((a, b) => a.d - b.d);
+				for (const n of nearest.slice(0, 2)) {
+					const key = i < n.idx ? `${i}-${n.idx}` : `${n.idx}-${i}`;
+					if (!edgeSet.has(key)) {
+						edgeSet.add(key);
+						constellationEdges.push({ a: i, b: n.idx });
+					}
+				}
 			}
 		};
 
@@ -154,6 +185,21 @@ const StarField = () => {
 
 			// Planet (behind stars)
 			drawPlanet(ctx, canvas.width, canvas.height);
+
+			// Constellation lines (between planet and stars)
+			ctx.lineWidth = 1.0;
+			for (const edge of constellationEdges) {
+				const sa = stars[edge.a];
+				const sb = stars[edge.b];
+				const twinkleA = Math.sin(frame * sa.twinkleSpeed + sa.phase) * 0.25 + 0.75;
+				const twinkleB = Math.sin(frame * sb.twinkleSpeed + sb.phase) * 0.25 + 0.75;
+				const alpha = Math.min(twinkleA, twinkleB) * 0.30;
+				ctx.beginPath();
+				ctx.moveTo(sa.x, sa.y);
+				ctx.lineTo(sb.x, sb.y);
+				ctx.strokeStyle = `rgba(140, 185, 255, ${alpha})`;
+				ctx.stroke();
+			}
 
 			// Stars
 			for (const star of stars) {

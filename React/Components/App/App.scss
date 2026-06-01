@@ -189,29 +189,62 @@
 					}
 				}
 
+				.galaxy-section {
+					width: 100%;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					margin-bottom: 6px;
+				}
+
+				.galaxy-section-label {
+					display: flex;
+					align-items: center;
+					gap: 6px;
+					font-size: 0.65rem;
+					font-family: 'Orbitron', monospace;
+					letter-spacing: 0.18em;
+					text-transform: uppercase;
+					color: rgba(140, 175, 255, 0.4);
+					margin-bottom: 6px;
+					align-self: center;
+
+					.galaxy-icon {
+						display: inline-flex;
+						svg {
+							width: 11px;
+							height: 11px;
+							opacity: 0.5;
+						}
+					}
+				}
+
 				.galaxy-recentlyedited {
 					display: flex;
 					align-items: center;
 					justify-content: center;
-					overflow-y: auto;
 					width: 100%;
+					gap: 4px;
 
 					.galaxy-recentlyedited-file {
 						color: rgba(190, 210, 255, 0.75);
 						text-decoration: none;
 						text-align: center;
-						padding: 10px 8px;
+						padding: 8px 10px;
 						white-space: nowrap;
 						overflow: hidden;
-						width: 100px;
+						width: 120px;
 						border-radius: 10px;
-						border: 1px solid transparent;
+						border: 1px solid rgba(100, 150, 255, 0.08);
+						background: rgba(30, 50, 120, 0.06);
 						transition: all 0.25s ease;
 
 						&:hover {
-							background: rgba(70, 110, 255, 0.12);
-							border-color: rgba(100, 150, 255, 0.25);
-							box-shadow: 0 0 18px rgba(70, 110, 255, 0.2);
+							background: rgba(70, 110, 255, 0.14);
+							border-color: rgba(100, 150, 255, 0.30);
+							box-shadow:
+								0 0 18px rgba(70, 110, 255, 0.18),
+								inset 0 1px 0 rgba(255, 255, 255, 0.04);
 							color: #ffffff;
 							text-shadow: 0 0 8px rgba(160, 190, 255, 0.7);
 						}
@@ -219,18 +252,20 @@
 						.galaxy-icon {
 							display: block;
 							svg {
-								width: 22px;
-								height: 22px;
+								width: 20px;
+								height: 20px;
+								opacity: 0.7;
 							}
 						}
 
 						.galaxy-recentlyedited-file-name {
 							display: block;
-							font-size: 11px;
+							font-size: 10.5px;
 							text-overflow: ellipsis;
 							overflow: hidden;
-							margin-top: 4px;
+							margin-top: 5px;
 							letter-spacing: 0.02em;
+							color: rgba(190, 215, 255, 0.65);
 						}
 					}
 				}

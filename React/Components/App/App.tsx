@@ -152,55 +152,67 @@ const App = ({
 						)}
 					</div>
 					{settings.showRecentFiles && (
-						<div className="galaxy-recentlyedited">
-							{latestModifiedMarkdownFiles?.map(
-								(file) =>
-									file instanceof TFile && (
-										<a
-											key={file.path}
-											className="galaxy-recentlyedited-file"
-											data-path={file.path}
-											onClick={() => {
-												const leaf =
-													obsidian?.workspace.getMostRecentLeaf();
-												if (file instanceof TFile) {
-													leaf?.openFile(file);
-												}
-											}}
-										>
-											<Icon name="file" />
-											<span className="galaxy-recentlyedited-file-name">
-												{file.basename}
-											</span>
-										</a>
-									)
-							)}
+						<div className="galaxy-section">
+							<div className="galaxy-section-label">
+								<Icon name="clock" />
+								<span>Récents</span>
+							</div>
+							<div className="galaxy-recentlyedited">
+								{latestModifiedMarkdownFiles?.map(
+									(file) =>
+										file instanceof TFile && (
+											<a
+												key={file.path}
+												className="galaxy-recentlyedited-file"
+												data-path={file.path}
+												onClick={() => {
+													const leaf =
+														obsidian?.workspace.getMostRecentLeaf();
+													if (file instanceof TFile) {
+														leaf?.openFile(file);
+													}
+												}}
+											>
+												<Icon name="file" />
+												<span className="galaxy-recentlyedited-file-name">
+													{file.basename}
+												</span>
+											</a>
+										)
+								)}
+							</div>
 						</div>
 					)}
 					{settings.showBookmarks && (
-						<div className="galaxy-recentlyedited">
-							{bookmarks?.map(
-								(file: TFile) =>
-									file && (
-										<a
-											key={file.path}
-											className="galaxy-recentlyedited-file"
-											data-path={file.path}
-											onClick={() => {
-												const leaf =
-													obsidian?.workspace.getMostRecentLeaf();
-												if (file instanceof TFile) {
-													leaf?.openFile(file);
-												}
-											}}
-										>
-											<Icon name="bookmark" />
-											<span className="galaxy-recentlyedited-file-name">
-												{file.basename}
-											</span>
-										</a>
-									)
-							)}
+						<div className="galaxy-section">
+							<div className="galaxy-section-label">
+								<Icon name="bookmark" />
+								<span>Signets</span>
+							</div>
+							<div className="galaxy-recentlyedited">
+								{bookmarks?.map(
+									(file: TFile) =>
+										file && (
+											<a
+												key={file.path}
+												className="galaxy-recentlyedited-file"
+												data-path={file.path}
+												onClick={() => {
+													const leaf =
+														obsidian?.workspace.getMostRecentLeaf();
+													if (file instanceof TFile) {
+														leaf?.openFile(file);
+													}
+												}}
+											>
+												<Icon name="file" />
+												<span className="galaxy-recentlyedited-file-name">
+													{file.basename}
+												</span>
+											</a>
+										)
+								)}
+							</div>
 						</div>
 					)}
 				</div>
