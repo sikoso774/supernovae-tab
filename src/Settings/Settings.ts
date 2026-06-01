@@ -1,20 +1,16 @@
-import fs from "fs";
 import { getBookmarkGroups } from "React/Utils/getBookmarks";
 import TabGalaxyPlugin from "main";
-import { App, PluginSettingTab, Setting, arrayBufferToBase64 } from "obsidian";
+import { App, PluginSettingTab, Setting } from "obsidian";
 import ChooseSearchProvider from "src/ChooseSearchProvider/ChooseSearchProvider";
 import CustomQuotesModel from "src/CustomQuotesModel/CustomQuotesModel";
 import {
 	BOOKMARK_SOURCE,
-	BackgroundTheme,
 	QUOTE_SOURCE,
 	TIME_FORMAT,
 } from "src/Types/Enums";
 import { CustomQuote, SearchProvider } from "src/Types/Interfaces";
 import capitalizeFirstLetter from "src/Utils/capitalizeFirstLetter";
-import electron from "electron";
 import ConfirmModal from "src/ConfirmModal/ConfirmModal";
-import ChooseImageSuggestModal from "src/ChooseImageSuggestModal/ChooseImageSuggestModal";
 
 const DEFAULT_SEARCH_PROVIDER: SearchProvider = {
 	command: "switcher:open",
@@ -29,9 +25,7 @@ export const SEARCH_PROVIDER = [
 ];
 
 export interface TabGalaxyPluginSettings {
-	backgroundTheme: BackgroundTheme;
-	customBackground: string;
-	localBackgrounds: string[];
+	userName: string;
 	showTopLeftSearchButton: boolean;
 	topLeftSearchProvider: SearchProvider;
 	showTime: boolean;
@@ -50,15 +44,13 @@ export interface TabGalaxyPluginSettings {
 }
 
 export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
-	backgroundTheme: BackgroundTheme.SEASONS_AND_HOLIDAYS,
-	customBackground: "",
-	localBackgrounds: [],
+	userName: "",
 	showTopLeftSearchButton: true,
 	topLeftSearchProvider: DEFAULT_SEARCH_PROVIDER,
 	showTime: true,
 	timeFormat: TIME_FORMAT.TWELVE_HOUR,
 	showGreeting: true,
-	greetingText: "{{greeting}}, explorer.",
+	greetingText: "{{greeting}}, {{name}}.",
 	showInlineSearch: true,
 	inlineSearchProvider: DEFAULT_SEARCH_PROVIDER,
 	showRecentFiles: true,
@@ -82,141 +74,6 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 
 		containerEl.empty();
-
-		/****************************************
-		 * Background settings
-		 ***************************************/
-		new Setting(containerEl).setHeading().setName(`Background settings`);
-
-		new Setting(containerEl)
-			.setName("Background theme")
-			.setDesc(
-				`What theme would you like to utilize for the random backgrounds? "Seasons and Holidays" will use a different tag depending on the time of the year. Custom will allow you to input your own url. Local will use the local images imported below.`
-			)
-			.addDropdown((component) => {
-				Object.values(BackgroundTheme).forEach((theme) => {
-					component.addOption(theme, capitalizeFirstLetter(theme));
-				});
-
-				component.setValue(this.plugin.settings.backgroundTheme);
-
-				component.onChange((value: BackgroundTheme) => {
-					this.plugin.settings.backgroundTheme = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
-					this.display();
-				});
-			});
-
-		if (this.plugin.settings.backgroundTheme === BackgroundTheme.CUSTOM) {
-			new Setting(containerEl)
-				.setName("Custom background url")
-				.setDesc(`What url should be used for the background image?`)
-				.addText((component) => {
-					component.setValue(this.plugin.settings.customBackground);
-					component.onChange((value) => {
-						this.plugin.settings.customBackground = value;
-						this.plugin.settingsObservable.setValue(
-							this.plugin.settings
-						);
-						this.plugin.saveSettings();
-						this.display();
-					});
-				});
-		}
-
-		const localBackgroundImagesSetting = new Setting(containerEl).setName(
-			"Local background images"
-		);
-
-		// @ts-ignore
-		if (!this.app.isMobile) {
-			localBackgroundImagesSetting.addButton((component) => {
-				component.setButtonText("Add local image");
-				component.onClick(() => {
-					// @ts-ignore
-					electron.remote.dialog
-						.showOpenDialog({
-							properties: ["openFile", "multiSelections"],
-							title: "Add background images",
-							filters: [
-								{ name: "Images", extensions: ["jpg", "png"] },
-							],
-						})
-						.then((result: any) => {
-							if (!result.canceled) {
-								result.filePaths.forEach((filePath: string) => {
-									const fileData = fs.readFileSync(filePath);
-									const base64Data =
-										fileData.toString("base64");
-
-									this.plugin.settings.localBackgrounds.push(
-										`data:image/png;base64,${base64Data}`
-									);
-								});
-
-								this.plugin.saveSettings();
-								this.display();
-							}
-						});
-				});
-			});
-		}
-
-		localBackgroundImagesSetting.addButton((component) => {
-			component.setButtonText("Add vault image");
-			component.onClick(() => {
-				new ChooseImageSuggestModal(this.app, async (result) => {
-					const fileData = await this.app.vault.readBinary(result);
-					const base64Data = arrayBufferToBase64(fileData);
-
-					this.plugin.settings.localBackgrounds.push(
-						`data:image/png;base64,${base64Data}`
-					);
-					this.plugin.saveSettings();
-					this.display();
-				}).open();
-			});
-		});
-
-		const localBackgroundsDiv = containerEl.createEl("div", {
-			cls: "galaxy-settings-localbackgrounds",
-		});
-
-		this.plugin.settings.localBackgrounds.forEach(
-			(localBackground, index) => {
-				const backgroundDiv = localBackgroundsDiv.createEl("div", {
-					cls: "galaxy-settings-localbackgrounds-background",
-				});
-				backgroundDiv.createEl("img", {
-					attr: {
-						src: localBackground,
-					},
-				});
-				backgroundDiv.createEl("button", {
-					text: "x",
-					cls: "galaxy-settings-localbackgrounds-background-delete",
-				});
-				backgroundDiv.addEventListener("click", () => {
-					new ConfirmModal(
-						this.app,
-						() => {
-							this.plugin.settings.localBackgrounds.splice(
-								index,
-								1
-							);
-							this.plugin.saveSettings();
-							this.display();
-						},
-						"Remove background",
-						`Are you sure?`,
-						"Remove"
-					).open();
-				});
-			}
-		);
 
 		/****************************************
 		 * Search settings
@@ -296,7 +153,6 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				`Which plugin should be utilized for search when clicking the middle of the screen button?`
 			)
 			.setClass("search-provider")
-
 			.addText((component) => {
 				component
 					.setValue(this.plugin.settings.inlineSearchProvider.display)
@@ -374,6 +230,23 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 		new Setting(containerEl).setHeading().setName(`Greeting settings`);
 
 		new Setting(containerEl)
+			.setName("Your name")
+			.setDesc(
+				`Your name, used in the greeting via the {{name}} placeholder.`
+			)
+			.addText((component) => {
+				component.setPlaceholder("explorer");
+				component.setValue(this.plugin.settings.userName);
+				component.onChange((value) => {
+					this.plugin.settings.userName = value;
+					this.plugin.settingsObservable.setValue(
+						this.plugin.settings
+					);
+					this.plugin.saveSettings();
+				});
+			});
+
+		new Setting(containerEl)
 			.setName("Show greeting")
 			.setDesc(
 				`Should the greeting in the middle of the new tab screen be displayed?`
@@ -393,7 +266,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Greeting text")
 			.setDesc(
-				`What text should be displayed as a greeting? You can use the {{greeting}} to add a greeting based on the time of the day. (E.g. Good morning)`
+				`What text should be displayed as a greeting? Use {{greeting}} for time-of-day (e.g. Good morning) and {{name}} for your name.`
 			)
 			.addText((component) => {
 				component.setValue(this.plugin.settings.greetingText);

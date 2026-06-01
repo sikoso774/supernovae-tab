@@ -127,10 +127,9 @@ const App = ({
 					)}
 					{settings.showGreeting && (
 						<div className="galaxy-greeting">
-							{settings.greetingText.replace(
-								/{{greeting}}/gi,
-								getTimeOfDayGreeting()
-							)}
+							{settings.greetingText
+								.replace(/{{greeting}}/gi, getTimeOfDayGreeting())
+								.replace(/{{name}}/gi, settings.userName || "explorer")}
 						</div>
 					)}
 				</div>
