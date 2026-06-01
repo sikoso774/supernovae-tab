@@ -1,6 +1,6 @@
 import esbuild from "esbuild";
 import process from "process";
-import builtins from "builtin-modules";
+import { builtinModules as builtins } from "node:module";
 import { sassPlugin } from "esbuild-sass-plugin";
 import copyStaticFiles from "esbuild-copy-static-files";
 import path from "path";

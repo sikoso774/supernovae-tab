@@ -3,7 +3,7 @@
 	"name": "Supernovae Tab",
 	"version": "0.1.0-beta.1",
 	"minAppVersion": "0.15.0",
-	"description": "A galaxy-themed new tab for Obsidian — animated starfield, space aesthetics, and your vault at the center of the universe.",
+	"description": "A galaxy-themed new tab — animated starfield, space aesthetics, and your vault at the center of the universe.",
 	"author": "Zoléni KOKOLO ZASSI",
 	"authorUrl": "https://github.com/Sikoso774",
 	"isDesktopOnly": false
