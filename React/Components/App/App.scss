@@ -1,0 +1,278 @@
+.workspace-tabs .workspace-leaf-content.tab-galaxy {
+	color: #e0e8ff;
+	container-type: size;
+
+	.view-header {
+		background: transparent;
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 40px;
+		height: 40px;
+		justify-content: space-between;
+		align-items: center;
+
+		.view-header-nav-buttons {
+			display: none;
+		}
+
+		.view-header-title-container {
+			display: none;
+		}
+
+		.view-action {
+			--icon-color: currentColor;
+		}
+
+		div {
+			margin-left: auto;
+		}
+	}
+
+	.view-content {
+		background-color: transparent;
+		padding: 0;
+		overflow: hidden;
+	}
+
+	.beautitab-root {
+		height: 100%;
+		width: 100%;
+		background: #04030f;
+		position: relative;
+		overflow: hidden;
+
+		.beautitab-wrapper {
+			height: 100%;
+			width: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			position: relative;
+			z-index: 1;
+
+			.beautitab-top {
+				flex: 1;
+				width: 100%;
+				height: 60px;
+				padding: 10px;
+
+				.beautitab-iconbutton {
+					opacity: 0.6;
+					color: #8aabff;
+					transition: opacity 0.2s ease;
+
+					&:hover {
+						opacity: 1;
+					}
+
+					svg {
+						width: 22px;
+						height: 22px;
+					}
+				}
+			}
+
+			.beautitab-center {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				width: 100%;
+				padding-bottom: 20px;
+
+				.beautitab-time {
+					font-size: 1050%;
+					line-height: 1;
+					font-weight: 100;
+					letter-spacing: 0.04em;
+					color: #ffffff;
+					text-shadow:
+						0 0 15px rgba(120, 170, 255, 0.9),
+						0 0 40px rgba(90, 130, 255, 0.5),
+						0 0 80px rgba(60, 90, 220, 0.3);
+
+					@container (max-width: 520px) {
+						font-size: 30cqw;
+					}
+				}
+
+				.galaxy-date {
+					font-size: 1rem;
+					font-weight: 300;
+					letter-spacing: 0.2em;
+					text-transform: uppercase;
+					color: rgba(170, 195, 255, 0.5);
+					margin-top: 8px;
+					margin-bottom: 4px;
+
+					@container (max-width: 520px) {
+						font-size: 0.75rem;
+					}
+				}
+
+				.beautitab-greeting {
+					font-size: 3rem;
+					font-weight: 300;
+					color: rgba(190, 210, 255, 0.85);
+					letter-spacing: 0.12em;
+					text-shadow: 0 0 25px rgba(110, 150, 255, 0.4);
+
+					@container (max-width: 520px) {
+						font-size: 8cqw;
+					}
+				}
+			}
+
+			.beautitab-bottom {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				width: 100%;
+				align-items: center;
+
+				.beautitab-search {
+					width: 50%;
+					min-width: 500px;
+
+					@container (max-width: 520px) {
+						width: 90%;
+						min-width: auto;
+					}
+
+					.beautitab-search-wrapper {
+						height: 56px;
+						border-radius: 56px;
+						display: flex;
+						align-items: center;
+						width: 100%;
+						-webkit-backdrop-filter: blur(12px);
+						backdrop-filter: blur(12px);
+						background: rgba(60, 90, 200, 0.08);
+						border: 1px solid rgba(100, 150, 255, 0.18);
+						box-shadow:
+							0 0 25px rgba(70, 110, 255, 0.12),
+							inset 0 1px 0 rgba(255, 255, 255, 0.04);
+						margin-bottom: 20px;
+						text-decoration: none;
+						color: inherit;
+						line-height: 1;
+						padding-left: 22px;
+						transition: all 0.3s ease;
+
+						&:hover {
+							background: rgba(60, 90, 200, 0.16);
+							border-color: rgba(100, 150, 255, 0.35);
+							box-shadow:
+								0 0 35px rgba(70, 110, 255, 0.25),
+								inset 0 1px 0 rgba(255, 255, 255, 0.08);
+						}
+
+						.beautitab-search-text {
+							font-size: 22px;
+							opacity: 0.5;
+							padding-left: 16px;
+							color: rgba(190, 210, 255, 0.9);
+							letter-spacing: 0.03em;
+						}
+
+						.beautitab-icon svg {
+							height: 22px;
+							width: 22px;
+							color: rgba(140, 180, 255, 0.7);
+						}
+					}
+				}
+
+				.beautitab-recentlyedited {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					overflow-y: auto;
+					width: 100%;
+
+					.beautitab-recentlyedited-file {
+						color: rgba(190, 210, 255, 0.75);
+						text-decoration: none;
+						text-align: center;
+						padding: 10px 8px;
+						white-space: nowrap;
+						overflow: hidden;
+						width: 100px;
+						border-radius: 10px;
+						border: 1px solid transparent;
+						transition: all 0.25s ease;
+
+						&:hover {
+							background: rgba(70, 110, 255, 0.12);
+							border-color: rgba(100, 150, 255, 0.25);
+							box-shadow: 0 0 18px rgba(70, 110, 255, 0.2);
+							color: #ffffff;
+							text-shadow: 0 0 8px rgba(160, 190, 255, 0.7);
+						}
+
+						.beautitab-icon {
+							display: block;
+							svg {
+								width: 22px;
+								height: 22px;
+							}
+						}
+
+						.beautitab-recentlyedited-file-name {
+							display: block;
+							font-size: 11px;
+							text-overflow: ellipsis;
+							overflow: hidden;
+							margin-top: 4px;
+							letter-spacing: 0.02em;
+						}
+					}
+				}
+			}
+
+			.beautitab-quote {
+				width: 100%;
+				min-height: 60px;
+				padding-bottom: 16px;
+				text-align: center;
+
+				@container (max-width: 599px) {
+					padding-bottom: 80px;
+				}
+
+				.beautitab-quote-content {
+					font-size: 1rem;
+					font-weight: 300;
+					font-style: italic;
+					margin-bottom: 6px;
+					color: rgba(170, 195, 255, 0.55);
+					letter-spacing: 0.04em;
+
+					@container (max-width: 600px) {
+						font-size: 0.8rem;
+					}
+				}
+
+				.beautitab-quote-author {
+					font-size: 0.72rem;
+					color: rgba(130, 165, 255, 0.4);
+					letter-spacing: 0.15em;
+					text-transform: uppercase;
+				}
+			}
+		}
+	}
+
+	.beautitab-iconbutton {
+		text-decoration: none;
+		color: inherit;
+
+		.beautitab-iconbutton-text {
+			position: absolute;
+			left: -9999999px;
+		}
+	}
+}
