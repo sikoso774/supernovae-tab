@@ -3,7 +3,7 @@ name: Build Pull Request
 on: pull_request
 
 env:
-  PLUGIN_NAME: obsidian-tab-galaxy
+  PLUGIN_NAME: supernovae-tab
 
 jobs:
   build:

@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  PLUGIN_NAME: obsidian-tab-galaxy
+  PLUGIN_NAME: supernovae-tab
 
 jobs:
   build:

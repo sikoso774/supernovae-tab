@@ -1,8 +1,8 @@
-# Tab Galaxy — Obsidian Plugin
+# Supernovae Tab — Obsidian Plugin
 
 A galaxy-themed new tab experience for Obsidian. Every new tab opens an animated starfield with your time, greeting, search, recent files, and more — all floating in deep space.
 
-![Tab Galaxy new tab screenshot](screenshots/screenshot1.png)
+![Supernovae Tab new tab screenshot](screenshots/screenshot1.png)
 
 ---
 
@@ -23,11 +23,11 @@ Every new empty tab is replaced by the galaxy view:
 - **Bookmarks** — from all bookmarks or a specific group
 - **Quote** — a random quote from the built-in list or your own custom quotes
 
-![Tab Galaxy settings screenshot](screenshots/screenshot-settings.png)
+![Supernovae Tab settings screenshot](screenshots/screenshot-settings.png)
 
 ### Home Dashboard
 
-Create a note named `Home.md` in your vault. Whenever you open it, Tab Galaxy intercepts the navigation and displays a dedicated Home Dashboard instead:
+Create a note named `Home.md` in your vault. Whenever you open it, Supernovae Tab intercepts the navigation and displays a dedicated Home Dashboard instead:
 
 - Same galaxy background as the new tab
 - **Navigation buttons** — configurable links to your key notes and folders
@@ -46,20 +46,20 @@ A pencil button (✏️) in the view header lets you edit `Home.md` directly wit
 ### Via Community Plugins (recommended)
 
 1. Open Obsidian Settings → Community Plugins
-2. Search for **Tab Galaxy**
+2. Search for **Supernovae Tab**
 3. Click Install, then Enable
 
 ### Manual
 
-1. Download the latest release from [GitHub Releases](https://github.com/Sikoso774/obsidian-tab-galaxy/releases)
-2. Copy `main.js`, `manifest.json`, and `styles.css` into your vault at `.obsidian/plugins/obsidian-tab-galaxy/`
+1. Download the latest release from [GitHub Releases](https://github.com/Sikoso774/supernovae-tab/releases)
+2. Copy `main.js`, `manifest.json`, and `styles.css` into your vault at `.obsidian/plugins/supernovae-tab/`
 3. Enable the plugin in Settings → Community Plugins
 
 ---
 
 ## Settings
 
-All settings are available under **Settings → Tab Galaxy**.
+All settings are available under **Settings → Supernovae Tab**.
 
 | Section | Options |
 | --- | --- |
@@ -89,7 +89,7 @@ All settings are available under **Settings → Tab Galaxy**.
 
 ## Home Dashboard — Active Projects
 
-Tab Galaxy automatically surfaces your active projects without any manual configuration. Just add this frontmatter to a note:
+Supernovae Tab automatically surfaces your active projects without any manual configuration. Just add this frontmatter to a note:
 
 ```yaml
 ---
@@ -112,7 +112,7 @@ It will appear in the **Active projects** section of your Home Dashboard.
 
 ## Reporting Issues
 
-Open an issue on [GitHub](https://github.com/Sikoso774/obsidian-tab-galaxy/issues) with as much detail as possible — Obsidian version, plugin version, and a screenshot if relevant.
+Open an issue on [GitHub](https://github.com/Sikoso774/supernovae-tab/issues) with as much detail as possible — Obsidian version, plugin version, and a screenshot if relevant.
 
 ---
 
