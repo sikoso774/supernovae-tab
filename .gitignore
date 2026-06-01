@@ -23,3 +23,6 @@ data.json
 
 # Remove local builds
 dist/
+
+# Logs
+*.log
