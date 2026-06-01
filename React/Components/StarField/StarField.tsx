@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 interface Star {
 	x: number;
@@ -17,6 +17,69 @@ interface ShootingStar {
 	length: number;
 	opacity: number;
 }
+
+const drawPlanet = (ctx: CanvasRenderingContext2D, w: number, h: number) => {
+	const px = w * 0.82;
+	const py = h * 0.76;
+	const r = Math.min(w * 0.12, h * 0.19);
+
+	// Outer atmosphere glow
+	const glow = ctx.createRadialGradient(px, py, r * 0.5, px, py, r * 2.6);
+	glow.addColorStop(0, "rgba(60, 100, 220, 0.07)");
+	glow.addColorStop(1, "rgba(0, 0, 0, 0)");
+	ctx.fillStyle = glow;
+	ctx.beginPath();
+	ctx.arc(px, py, r * 2.6, 0, Math.PI * 2);
+	ctx.fill();
+
+	// Ring — far half (behind planet)
+	ctx.save();
+	ctx.translate(px, py);
+	ctx.rotate(-0.22);
+	ctx.scale(1, 0.26);
+	ctx.beginPath();
+	ctx.arc(0, 0, r * 1.62, Math.PI, Math.PI * 2);
+	ctx.strokeStyle = "rgba(110, 160, 255, 0.13)";
+	ctx.lineWidth = r * 0.18;
+	ctx.stroke();
+	ctx.restore();
+
+	// Planet body — radial gradient with light source top-left
+	const body = ctx.createRadialGradient(
+		px - r * 0.28, py - r * 0.28, r * 0.05,
+		px + r * 0.15, py + r * 0.15, r
+	);
+	body.addColorStop(0, "rgba(155, 190, 255, 0.30)");
+	body.addColorStop(0.4, "rgba(65, 100, 205, 0.24)");
+	body.addColorStop(0.82, "rgba(18, 42, 135, 0.18)");
+	body.addColorStop(1, "rgba(6, 12, 65, 0.10)");
+	ctx.beginPath();
+	ctx.arc(px, py, r, 0, Math.PI * 2);
+	ctx.fillStyle = body;
+	ctx.fill();
+
+	// Atmospheric rim
+	const rim = ctx.createRadialGradient(px, py, r * 0.72, px, py, r * 1.06);
+	rim.addColorStop(0, "rgba(0, 0, 0, 0)");
+	rim.addColorStop(0.75, "rgba(90, 140, 255, 0.04)");
+	rim.addColorStop(1, "rgba(120, 175, 255, 0.13)");
+	ctx.beginPath();
+	ctx.arc(px, py, r * 1.06, 0, Math.PI * 2);
+	ctx.fillStyle = rim;
+	ctx.fill();
+
+	// Ring — near half (in front of planet)
+	ctx.save();
+	ctx.translate(px, py);
+	ctx.rotate(-0.22);
+	ctx.scale(1, 0.26);
+	ctx.beginPath();
+	ctx.arc(0, 0, r * 1.62, 0, Math.PI);
+	ctx.strokeStyle = "rgba(130, 175, 255, 0.18)";
+	ctx.lineWidth = r * 0.18;
+	ctx.stroke();
+	ctx.restore();
+};
 
 const StarField = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -88,19 +151,23 @@ const StarField = () => {
 			ctx.fillStyle = nebula2;
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+			// Planet (behind stars)
+			drawPlanet(ctx, canvas.width, canvas.height);
+
 			// Stars
 			for (const star of stars) {
-				const twinkle = Math.sin(frame * star.twinkleSpeed + star.phase) * 0.25 + 0.75;
+				const twinkle =
+					Math.sin(frame * star.twinkleSpeed + star.phase) * 0.25 + 0.75;
 				const alpha = star.opacity * twinkle;
 
 				if (star.radius > 1.1) {
-					const glow = ctx.createRadialGradient(
+					const starGlow = ctx.createRadialGradient(
 						star.x, star.y, 0,
 						star.x, star.y, star.radius * 4
 					);
-					glow.addColorStop(0, `rgba(180, 210, 255, ${alpha * 0.5})`);
-					glow.addColorStop(1, "rgba(0, 0, 0, 0)");
-					ctx.fillStyle = glow;
+					starGlow.addColorStop(0, `rgba(180, 210, 255, ${alpha * 0.5})`);
+					starGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
+					ctx.fillStyle = starGlow;
 					ctx.fillRect(
 						star.x - star.radius * 4,
 						star.y - star.radius * 4,
@@ -129,9 +196,16 @@ const StarField = () => {
 				if (shootingStar.opacity <= 0) {
 					shootingStar = null;
 				} else {
-					const tailX = shootingStar.x - Math.cos(shootingStar.angle) * shootingStar.length;
-					const tailY = shootingStar.y - Math.sin(shootingStar.angle) * shootingStar.length;
-					const grad = ctx.createLinearGradient(tailX, tailY, shootingStar.x, shootingStar.y);
+					const tailX =
+						shootingStar.x -
+						Math.cos(shootingStar.angle) * shootingStar.length;
+					const tailY =
+						shootingStar.y -
+						Math.sin(shootingStar.angle) * shootingStar.length;
+					const grad = ctx.createLinearGradient(
+						tailX, tailY,
+						shootingStar.x, shootingStar.y
+					);
 					grad.addColorStop(0, "rgba(200, 220, 255, 0)");
 					grad.addColorStop(1, `rgba(255, 255, 255, ${shootingStar.opacity})`);
 					ctx.beginPath();
@@ -158,19 +232,7 @@ const StarField = () => {
 		};
 	}, []);
 
-	return (
-		<canvas
-			ref={canvasRef}
-			style={{
-				position: "absolute",
-				top: 0,
-				left: 0,
-				width: "100%",
-				height: "100%",
-				pointerEvents: "none",
-			}}
-		/>
-	);
+	return <canvas ref={canvasRef} className="galaxy-starfield" />;
 };
 
 export default StarField;
