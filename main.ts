@@ -21,6 +21,8 @@ export default class TabGalaxyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
+		this.injectOrbitronFont();
+
 		this.settingsObservable = new Observable(this.settings);
 
 		this.registerView(
@@ -53,7 +55,19 @@ export default class TabGalaxyPlugin extends Plugin {
 		}
 	}
 
-	onunload() {}
+	onunload() {
+		document.getElementById("tab-galaxy-orbitron")?.remove();
+	}
+
+	private injectOrbitronFont(): void {
+		if (document.getElementById("tab-galaxy-orbitron")) return;
+		const link = document.createElement("link");
+		link.id = "tab-galaxy-orbitron";
+		link.rel = "stylesheet";
+		link.href =
+			"https://fonts.googleapis.com/css2?family=Orbitron:wght@100;300;400;700&display=swap";
+		document.head.appendChild(link);
+	}
 
 	async loadSettings() {
 		const data = (await this.loadData()) || {};

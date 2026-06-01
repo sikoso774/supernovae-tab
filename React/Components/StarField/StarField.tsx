@@ -25,7 +25,8 @@ const drawPlanet = (ctx: CanvasRenderingContext2D, w: number, h: number) => {
 
 	// Outer atmosphere glow
 	const glow = ctx.createRadialGradient(px, py, r * 0.5, px, py, r * 2.6);
-	glow.addColorStop(0, "rgba(60, 100, 220, 0.07)");
+	glow.addColorStop(0, "rgba(60, 100, 220, 0.18)");
+	glow.addColorStop(0.5, "rgba(40, 70, 180, 0.08)");
 	glow.addColorStop(1, "rgba(0, 0, 0, 0)");
 	ctx.fillStyle = glow;
 	ctx.beginPath();
@@ -39,8 +40,8 @@ const drawPlanet = (ctx: CanvasRenderingContext2D, w: number, h: number) => {
 	ctx.scale(1, 0.26);
 	ctx.beginPath();
 	ctx.arc(0, 0, r * 1.62, Math.PI, Math.PI * 2);
-	ctx.strokeStyle = "rgba(110, 160, 255, 0.13)";
-	ctx.lineWidth = r * 0.18;
+	ctx.strokeStyle = "rgba(110, 160, 255, 0.30)";
+	ctx.lineWidth = r * 0.22;
 	ctx.stroke();
 	ctx.restore();
 
@@ -49,10 +50,10 @@ const drawPlanet = (ctx: CanvasRenderingContext2D, w: number, h: number) => {
 		px - r * 0.28, py - r * 0.28, r * 0.05,
 		px + r * 0.15, py + r * 0.15, r
 	);
-	body.addColorStop(0, "rgba(155, 190, 255, 0.30)");
-	body.addColorStop(0.4, "rgba(65, 100, 205, 0.24)");
-	body.addColorStop(0.82, "rgba(18, 42, 135, 0.18)");
-	body.addColorStop(1, "rgba(6, 12, 65, 0.10)");
+	body.addColorStop(0, "rgba(155, 190, 255, 0.65)");
+	body.addColorStop(0.4, "rgba(65, 100, 205, 0.52)");
+	body.addColorStop(0.82, "rgba(18, 42, 135, 0.40)");
+	body.addColorStop(1, "rgba(6, 12, 65, 0.25)");
 	ctx.beginPath();
 	ctx.arc(px, py, r, 0, Math.PI * 2);
 	ctx.fillStyle = body;
@@ -61,8 +62,8 @@ const drawPlanet = (ctx: CanvasRenderingContext2D, w: number, h: number) => {
 	// Atmospheric rim
 	const rim = ctx.createRadialGradient(px, py, r * 0.72, px, py, r * 1.06);
 	rim.addColorStop(0, "rgba(0, 0, 0, 0)");
-	rim.addColorStop(0.75, "rgba(90, 140, 255, 0.04)");
-	rim.addColorStop(1, "rgba(120, 175, 255, 0.13)");
+	rim.addColorStop(0.75, "rgba(90, 140, 255, 0.10)");
+	rim.addColorStop(1, "rgba(120, 175, 255, 0.28)");
 	ctx.beginPath();
 	ctx.arc(px, py, r * 1.06, 0, Math.PI * 2);
 	ctx.fillStyle = rim;
@@ -75,8 +76,8 @@ const drawPlanet = (ctx: CanvasRenderingContext2D, w: number, h: number) => {
 	ctx.scale(1, 0.26);
 	ctx.beginPath();
 	ctx.arc(0, 0, r * 1.62, 0, Math.PI);
-	ctx.strokeStyle = "rgba(130, 175, 255, 0.18)";
-	ctx.lineWidth = r * 0.18;
+	ctx.strokeStyle = "rgba(150, 195, 255, 0.40)";
+	ctx.lineWidth = r * 0.22;
 	ctx.stroke();
 	ctx.restore();
 };
