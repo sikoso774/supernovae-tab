@@ -1,11 +1,10 @@
 {
-	"id": "beautitab",
-	"name": "Beautitab",
-	"version": "1.6.0-beta.2",
+	"id": "obsidian-tab-galaxy",
+	"name": "Tab Galaxy",
+	"version": "0.1.0-beta.1",
 	"minAppVersion": "0.15.0",
-	"description": "Creates a customizable new tab view with beautiful backgrounds, quotes, search, and more.",
-	"author": "Andrew McGivery",
-	"authorUrl": "https://github.com/andrewmcgivery",
-	"fundingUrl": "https://www.buymeacoffee.com/andrewmcgivery",
+	"description": "A galaxy-themed new tab for Obsidian — animated starfield, space aesthetics, and your vault at the center of the universe.",
+	"author": "Zoléni KOKOLO ZASSI",
+	"authorUrl": "https://github.com/Sikoso774",
 	"isDesktopOnly": false
 }

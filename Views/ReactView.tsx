@@ -3,7 +3,7 @@ import { Root, createRoot } from "react-dom/client";
 import ReactApp from "../React/Components/App/App";
 import { ObsidianContext } from "../React/Context/ObsidianAppContext";
 import Observable from "src/Utils/Observable";
-import BeautitabPlugin from "main";
+import TabGalaxyPlugin from "main";
 
 export const GALAXY_REACT_VIEW = "tab-galaxy-react-view";
 
@@ -11,13 +11,13 @@ export class ReactView extends FileView {
 	root: Root | null = null;
 	app: App;
 	settingsObservable: Observable;
-	plugin: BeautitabPlugin;
+	plugin: TabGalaxyPlugin;
 
 	constructor(
 		app: App,
 		settingsObservable: Observable,
 		leaf: WorkspaceLeaf,
-		plugin: BeautitabPlugin
+		plugin: TabGalaxyPlugin
 	) {
 		super(leaf);
 		this.app = app;

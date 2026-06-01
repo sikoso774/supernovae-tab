@@ -1,6 +1,6 @@
 import fs from "fs";
 import { getBookmarkGroups } from "React/Utils/getBookmarks";
-import BeautitabPlugin from "main";
+import TabGalaxyPlugin from "main";
 import { App, PluginSettingTab, Setting, arrayBufferToBase64 } from "obsidian";
 import ChooseSearchProvider from "src/ChooseSearchProvider/ChooseSearchProvider";
 import CustomQuotesModel from "src/CustomQuotesModel/CustomQuotesModel";
@@ -28,7 +28,7 @@ export const SEARCH_PROVIDER = [
 	"obsidian-another-quick-switcher",
 ];
 
-export interface BeautitabPluginSettings {
+export interface TabGalaxyPluginSettings {
 	backgroundTheme: BackgroundTheme;
 	customBackground: string;
 	localBackgrounds: string[];
@@ -49,7 +49,7 @@ export interface BeautitabPluginSettings {
 	customQuotes: CustomQuote[];
 }
 
-export const DEFAULT_SETTINGS: BeautitabPluginSettings = {
+export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
 	backgroundTheme: BackgroundTheme.SEASONS_AND_HOLIDAYS,
 	customBackground: "",
 	localBackgrounds: [],
@@ -58,7 +58,7 @@ export const DEFAULT_SETTINGS: BeautitabPluginSettings = {
 	showTime: true,
 	timeFormat: TIME_FORMAT.TWELVE_HOUR,
 	showGreeting: true,
-	greetingText: "Hello, Beautiful.",
+	greetingText: "{{greeting}}, explorer.",
 	showInlineSearch: true,
 	inlineSearchProvider: DEFAULT_SEARCH_PROVIDER,
 	showRecentFiles: true,
@@ -70,10 +70,10 @@ export const DEFAULT_SETTINGS: BeautitabPluginSettings = {
 	customQuotes: [],
 };
 
-export class BeautitabPluginSettingTab extends PluginSettingTab {
-	plugin: BeautitabPlugin;
+export class TabGalaxyPluginSettingTab extends PluginSettingTab {
+	plugin: TabGalaxyPlugin;
 
-	constructor(app: App, plugin: BeautitabPlugin) {
+	constructor(app: App, plugin: TabGalaxyPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -182,13 +182,13 @@ export class BeautitabPluginSettingTab extends PluginSettingTab {
 		});
 
 		const localBackgroundsDiv = containerEl.createEl("div", {
-			cls: "beautitabsettings-localbackgrounds",
+			cls: "galaxy-settings-localbackgrounds",
 		});
 
 		this.plugin.settings.localBackgrounds.forEach(
 			(localBackground, index) => {
 				const backgroundDiv = localBackgroundsDiv.createEl("div", {
-					cls: "beautitabsettings-localbackgrounds-background",
+					cls: "galaxy-settings-localbackgrounds-background",
 				});
 				backgroundDiv.createEl("img", {
 					attr: {
@@ -197,7 +197,7 @@ export class BeautitabPluginSettingTab extends PluginSettingTab {
 				});
 				backgroundDiv.createEl("button", {
 					text: "x",
-					cls: "beautitabsettings-localbackgrounds-background-delete",
+					cls: "galaxy-settings-localbackgrounds-background-delete",
 				});
 				backgroundDiv.addEventListener("click", () => {
 					new ConfirmModal(

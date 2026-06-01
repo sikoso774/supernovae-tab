@@ -1,5 +1,5 @@
 import { App, FuzzySuggestModal, TFile } from "obsidian";
-import { BeautitabPluginSettings } from "src/Settings/Settings";
+import { TabGalaxyPluginSettings } from "src/Settings/Settings";
 
 export interface Image {
 	name: string;
@@ -7,7 +7,7 @@ export interface Image {
 }
 
 class ChooseImageSuggestModal extends FuzzySuggestModal<TFile> {
-	settings: BeautitabPluginSettings;
+	settings: TabGalaxyPluginSettings;
 	onSubmit: (result: TFile) => void;
 	result: TFile;
 

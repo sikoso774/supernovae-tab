@@ -4,10 +4,10 @@ import { TFile, getIcon } from "obsidian";
 import getTime from "React/Utils/getTime";
 import getDate from "React/Utils/getDate";
 import Observable from "src/Utils/Observable";
-import BeautitabPlugin from "main";
+import TabGalaxyPlugin from "main";
 import getTimeOfDayGreeting from "React/Utils/getTimeOfDayGreeting";
 import { getBookmarks } from "React/Utils/getBookmarks";
-import { BeautitabPluginSettings } from "src/Settings/Settings";
+import { TabGalaxyPluginSettings } from "src/Settings/Settings";
 import getQuote from "React/Utils/getQuote";
 import StarField from "../StarField/StarField";
 
@@ -17,7 +17,7 @@ const Icon = ({ name }: { name: string }) => {
 	);
 	return (
 		<span
-			className="beautitab-icon"
+			className="galaxy-icon"
 			dangerouslySetInnerHTML={{ __html: iconText }}
 		></span>
 	);
@@ -28,13 +28,13 @@ const App = ({
 	plugin,
 }: {
 	settingsObservable: Observable;
-	plugin: BeautitabPlugin;
+	plugin: TabGalaxyPlugin;
 }) => {
 	const [quote, setQuote] = useState<{
 		content: string;
 		author: string;
 	} | null>(null);
-	const [settings, setSettings] = useState<BeautitabPluginSettings>(
+	const [settings, setSettings] = useState<TabGalaxyPluginSettings>(
 		settingsObservable.getValue()
 	);
 	const [time, setTime] = useState(getTime(settings.timeFormat));
@@ -77,7 +77,7 @@ const App = ({
 
 	useEffect(() => {
 		const unsubscribe = settingsObservable.onChange(
-			(newSettings: BeautitabPluginSettings) => setSettings(newSettings)
+			(newSettings: TabGalaxyPluginSettings) => setSettings(newSettings)
 		);
 		return () => unsubscribe();
 	}, [setSettings]);
@@ -88,7 +88,7 @@ const App = ({
 
 	return (
 		<div
-			className="beautitab-root"
+			className="galaxy-root"
 			onKeyDown={(e) => {
 				if (!e.ctrlKey && !e.altKey && /^[A-Za-z0-9]$/.test(e.key)) {
 					plugin.openSwitcherCommand(
@@ -100,33 +100,33 @@ const App = ({
 			ref={mainDivRef}
 		>
 			<StarField />
-			<div className="beautitab-wrapper">
-				<div className="beautitab-top">
+			<div className="galaxy-wrapper">
+				<div className="galaxy-top">
 					{settings.showTopLeftSearchButton && (
 						<a
-							className="beautitab-iconbutton"
+							className="galaxy-iconbutton"
 							onClick={() => {
 								plugin.openSwitcherCommand(
 									settings.topLeftSearchProvider.command
 								);
 							}}
 						>
-							<span className="beautitab-iconbutton-text">
+							<span className="galaxy-iconbutton-text">
 								Open Search
 							</span>
 							<Icon name="search" />
 						</a>
 					)}
 				</div>
-				<div className="beautitab-center">
+				<div className="galaxy-center">
 					{settings.showTime && (
-						<div className="beautitab-time">{time}</div>
+						<div className="galaxy-time">{time}</div>
 					)}
 					{settings.showTime && (
 						<div className="galaxy-date">{date}</div>
 					)}
 					{settings.showGreeting && (
-						<div className="beautitab-greeting">
+						<div className="galaxy-greeting">
 							{settings.greetingText.replace(
 								/{{greeting}}/gi,
 								getTimeOfDayGreeting()
@@ -134,11 +134,11 @@ const App = ({
 						</div>
 					)}
 				</div>
-				<div className="beautitab-bottom">
-					<div className="beautitab-search">
+				<div className="galaxy-bottom">
+					<div className="galaxy-search">
 						{settings.showInlineSearch && (
 							<a
-								className="beautitab-search-wrapper"
+								className="galaxy-search-wrapper"
 								onClick={() => {
 									plugin.openSwitcherCommand(
 										settings.inlineSearchProvider.command
@@ -146,20 +146,20 @@ const App = ({
 								}}
 							>
 								<Icon name="search" />
-								<span className="beautitab-search-text">
+								<span className="galaxy-search-text">
 									Rechercher dans le vault...
 								</span>
 							</a>
 						)}
 					</div>
 					{settings.showRecentFiles && (
-						<div className="beautitab-recentlyedited">
+						<div className="galaxy-recentlyedited">
 							{latestModifiedMarkdownFiles?.map(
 								(file) =>
 									file instanceof TFile && (
 										<a
 											key={file.path}
-											className="beautitab-recentlyedited-file"
+											className="galaxy-recentlyedited-file"
 											data-path={file.path}
 											onClick={() => {
 												const leaf =
@@ -170,7 +170,7 @@ const App = ({
 											}}
 										>
 											<Icon name="file" />
-											<span className="beautitab-recentlyedited-file-name">
+											<span className="galaxy-recentlyedited-file-name">
 												{file.basename}
 											</span>
 										</a>
@@ -179,13 +179,13 @@ const App = ({
 						</div>
 					)}
 					{settings.showBookmarks && (
-						<div className="beautitab-recentlyedited">
+						<div className="galaxy-recentlyedited">
 							{bookmarks?.map(
 								(file: TFile) =>
 									file && (
 										<a
 											key={file.path}
-											className="beautitab-recentlyedited-file"
+											className="galaxy-recentlyedited-file"
 											data-path={file.path}
 											onClick={() => {
 												const leaf =
@@ -196,7 +196,7 @@ const App = ({
 											}}
 										>
 											<Icon name="bookmark" />
-											<span className="beautitab-recentlyedited-file-name">
+											<span className="galaxy-recentlyedited-file-name">
 												{file.basename}
 											</span>
 										</a>
@@ -205,14 +205,14 @@ const App = ({
 						</div>
 					)}
 				</div>
-				<div className="beautitab-quote">
+				<div className="galaxy-quote">
 					{quote && settings.showQuote && (
-						<div className="beautitab-quote-content">
+						<div className="galaxy-quote-content">
 							&quot;{quote.content}&quot;
 						</div>
 					)}
 					{quote && settings.showQuote && (
-						<div className="beautitab-quote-author">
+						<div className="galaxy-quote-author">
 							— {quote.author}
 						</div>
 					)}

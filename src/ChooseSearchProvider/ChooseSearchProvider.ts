@@ -1,6 +1,6 @@
 import { App, FuzzySuggestModal } from "obsidian";
 import {
-	BeautitabPluginSettings,
+	TabGalaxyPluginSettings,
 	SEARCH_PROVIDER,
 } from "src/Settings/Settings";
 import { SearchProvider } from "src/Types/Interfaces";
@@ -8,16 +8,16 @@ import { SearchProvider } from "src/Types/Interfaces";
 /**
  * This class is used to create a modal to choose a search provider from a list of available search providers
  * Available search providers are defined in SEARCH_PROVIDER
- * Used in BeautitabPluginSettingTab
+ * Used in TabGalaxyPluginSettingTab
  */
 class ChooseSearchProvider extends FuzzySuggestModal<SearchProvider> {
-	settings: BeautitabPluginSettings;
+	settings: TabGalaxyPluginSettings;
 	onSubmit: (result: SearchProvider) => void;
 	result: SearchProvider;
 
 	constructor(
 		app: App,
-		settings: BeautitabPluginSettings,
+		settings: TabGalaxyPluginSettings,
 		onSubmit: (result: SearchProvider) => void
 	) {
 		super(app);

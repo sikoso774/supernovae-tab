@@ -1,5 +1,5 @@
 import { App, TAbstractFile } from "obsidian";
-import { BeautitabPluginSettings } from "src/Settings/Settings";
+import { TabGalaxyPluginSettings } from "src/Settings/Settings";
 import { BOOKMARK_SOURCE } from "src/Types/Enums";
 
 /**
@@ -55,7 +55,7 @@ const getBookmarksByGroupName = (title: string, items: any[]) => {
  */
 export const getBookmarks = (
 	app: App | undefined,
-	settings: BeautitabPluginSettings
+	settings: TabGalaxyPluginSettings
 ): TAbstractFile[] => {
 	// @ts-ignore
 	let bookmarks = app?.internalPlugins.plugins.bookmarks.instance.items;
