@@ -1,5 +1,6 @@
-import { Notice, Plugin } from "obsidian";
+import { Notice, Plugin, TFile, WorkspaceLeaf } from "obsidian";
 import { ReactView, GALAXY_REACT_VIEW } from "./Views/ReactView";
+import { HomeView, GALAXY_HOME_VIEW } from "./Views/HomeView";
 import Observable from "src/Utils/Observable";
 import {
 	TabGalaxyPluginSettingTab,
@@ -17,6 +18,8 @@ if (process.env.NODE_ENV === "development") {
 export default class TabGalaxyPlugin extends Plugin {
 	settings: TabGalaxyPluginSettings;
 	settingsObservable: Observable;
+	bypassHomeIntercept = false;
+	homeLeaves = new Set<WorkspaceLeaf>();
 
 	async onload() {
 		await this.loadSettings();
@@ -31,6 +34,20 @@ export default class TabGalaxyPlugin extends Plugin {
 				new ReactView(this.app, this.settingsObservable, leaf, this)
 		);
 
+		this.registerView(
+			GALAXY_HOME_VIEW,
+			(leaf) =>
+				new HomeView(this.app, this.settingsObservable, leaf, this)
+		);
+
+		this.addCommand({
+			id: "open-galaxy-home",
+			name: "Open Home Dashboard",
+			callback: () => this.openHomeView(),
+		});
+
+		this.addRibbonIcon("home", "Galaxy Home", () => this.openHomeView());
+
 		this.addSettingTab(new TabGalaxyPluginSettingTab(this.app, this));
 
 		this.registerEvent(
@@ -38,6 +55,42 @@ export default class TabGalaxyPlugin extends Plugin {
 				"layout-change",
 				this.onLayoutChange.bind(this)
 			)
+		);
+
+		this.registerEvent(
+			this.app.workspace.on("file-open", async (file) => {
+				if (!file) return;
+
+				const activeLeaf = this.app.workspace.activeLeaf;
+
+				// Home.md ouvert dans un onglet normal → convertir en vue galaxie
+				if (file.basename === "Home") {
+					if (this.bypassHomeIntercept) {
+						this.bypassHomeIntercept = false;
+						return;
+					}
+					if (!activeLeaf || activeLeaf.getViewState().type === GALAXY_HOME_VIEW) return;
+					await activeLeaf.setViewState({ type: GALAXY_HOME_VIEW, active: true });
+					return;
+				}
+
+				// Fichier non-Home ouvert dans un onglet Home → rediriger vers nouvel onglet
+				if (
+					activeLeaf &&
+					this.homeLeaves.has(activeLeaf) &&
+					activeLeaf.getViewState().type !== GALAXY_HOME_VIEW
+				) {
+					this.bypassHomeIntercept = true;
+					await activeLeaf.setViewState({ type: GALAXY_HOME_VIEW });
+					const newLeaf = this.app.workspace.getLeaf(true);
+					const tfile = this.app.vault.getAbstractFileByPath(file.path);
+					if (tfile instanceof TFile) {
+						await newLeaf.openFile(tfile);
+						this.app.workspace.revealLeaf(newLeaf);
+					}
+					setTimeout(() => { this.bypassHomeIntercept = false; }, 500);
+				}
+			})
 		);
 
 		if (process.env.NODE_ENV === "development") {
@@ -57,6 +110,17 @@ export default class TabGalaxyPlugin extends Plugin {
 
 	onunload() {
 		document.getElementById("tab-galaxy-orbitron")?.remove();
+	}
+
+	async openHomeView(): Promise<void> {
+		const existing = this.app.workspace.getLeavesOfType(GALAXY_HOME_VIEW);
+		if (existing.length > 0) {
+			this.app.workspace.revealLeaf(existing[0]);
+			return;
+		}
+		const leaf = this.app.workspace.getLeaf(true);
+		await leaf.setViewState({ type: GALAXY_HOME_VIEW });
+		this.app.workspace.revealLeaf(leaf);
 	}
 
 	private injectOrbitronFont(): void {
@@ -79,6 +143,7 @@ export default class TabGalaxyPlugin extends Plugin {
 	}
 
 	private onLayoutChange(): void {
+		if (this.bypassHomeIntercept) return;
 		const leaf = this.app.workspace.getMostRecentLeaf();
 		if (leaf?.getViewState().type === "empty") {
 			leaf.setViewState({

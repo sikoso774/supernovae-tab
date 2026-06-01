@@ -3,12 +3,13 @@ import TabGalaxyPlugin from "main";
 import { App, PluginSettingTab, Setting } from "obsidian";
 import ChooseSearchProvider from "src/ChooseSearchProvider/ChooseSearchProvider";
 import CustomQuotesModel from "src/CustomQuotesModel/CustomQuotesModel";
+import NavLinksModal from "src/NavLinksModal/NavLinksModal";
 import {
 	BOOKMARK_SOURCE,
 	QUOTE_SOURCE,
 	TIME_FORMAT,
 } from "src/Types/Enums";
-import { CustomQuote, SearchProvider } from "src/Types/Interfaces";
+import { CustomQuote, NavLink, SearchProvider } from "src/Types/Interfaces";
 import capitalizeFirstLetter from "src/Utils/capitalizeFirstLetter";
 import ConfirmModal from "src/ConfirmModal/ConfirmModal";
 
@@ -41,6 +42,7 @@ export interface TabGalaxyPluginSettings {
 	showQuote: boolean;
 	quoteSource: QUOTE_SOURCE;
 	customQuotes: CustomQuote[];
+	homeNavLinks: NavLink[];
 }
 
 export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
@@ -60,6 +62,13 @@ export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
 	showQuote: true,
 	quoteSource: QUOTE_SOURCE.QUOTEABLE,
 	customQuotes: [],
+	homeNavLinks: [
+		{ label: "📘 Journal", path: "Dashboard" },
+		{ label: "🚀 Projets", path: "LienVersProjets" },
+		{ label: "🧠 Hub", path: "🧠Hub" },
+		{ label: "📖 Reading", path: "LIVRES.base" },
+		{ label: "☀️ Aujourd'hui", path: "{{today}}" },
+	],
 };
 
 export class TabGalaxyPluginSettingTab extends PluginSettingTab {
@@ -366,6 +375,33 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 					});
 				});
 		}
+
+		/****************************************
+		 * Home Dashboard settings
+		 ***************************************/
+		new Setting(containerEl).setHeading().setName(`Home Dashboard settings`);
+
+		new Setting(containerEl)
+			.setName("Navigation links")
+			.setDesc(
+				`${this.plugin.settings.homeNavLinks.length} link(s). Use {{today}} as path to open today's journal note.`
+			)
+			.addButton((component) => {
+				component.setButtonText("Edit");
+				component.onClick(() => {
+					new NavLinksModal(
+						this.plugin,
+						(modified: NavLink[]) => {
+							this.plugin.settings.homeNavLinks = modified;
+							this.plugin.settingsObservable.setValue(
+								this.plugin.settings
+							);
+							this.plugin.saveSettings();
+							this.display();
+						}
+					).open();
+				});
+			});
 
 		/****************************************
 		 * Quote settings

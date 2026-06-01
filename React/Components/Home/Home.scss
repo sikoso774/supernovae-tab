@@ -1,0 +1,115 @@
+.workspace-tabs .workspace-leaf-content.tab-galaxy-home {
+
+	.home-wrapper {
+		justify-content: space-between;
+		padding: 32px 0 24px;
+	}
+
+	/* Heure plus compacte que le new tab */
+	.home-center {
+		flex: 0 0 auto;
+		padding-bottom: 0;
+	}
+
+	.home-time {
+		font-size: 600% !important;
+
+		@container (max-width: 520px) {
+			font-size: 20cqw !important;
+		}
+	}
+
+	/* ── Boutons de navigation ───────────────────── */
+	.home-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		justify-content: center;
+		padding: 28px 24px 0;
+		flex: 0 0 auto;
+	}
+
+	.home-nav-btn {
+		display: inline-block;
+		padding: 12px 26px;
+		border-radius: 12px;
+		border: 1px solid rgba(100, 150, 255, 0.18);
+		background: rgba(60, 90, 200, 0.08);
+		-webkit-backdrop-filter: blur(12px);
+		backdrop-filter: blur(12px);
+		color: rgba(190, 210, 255, 0.85);
+		text-decoration: none;
+		font-size: 0.95rem;
+		letter-spacing: 0.04em;
+		cursor: pointer;
+		transition: all 0.25s ease;
+		box-shadow:
+			0 0 20px rgba(70, 110, 255, 0.08),
+			inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+		&:hover {
+			background: rgba(70, 110, 255, 0.18);
+			border-color: rgba(100, 150, 255, 0.38);
+			box-shadow:
+				0 0 28px rgba(70, 110, 255, 0.28),
+				inset 0 1px 0 rgba(255, 255, 255, 0.07);
+			color: #ffffff;
+			text-shadow: 0 0 8px rgba(160, 190, 255, 0.7);
+		}
+
+		&--today {
+			border-color: rgba(255, 190, 80, 0.25);
+			background: rgba(200, 140, 30, 0.06);
+
+			&:hover {
+				background: rgba(220, 160, 40, 0.16);
+				border-color: rgba(255, 200, 100, 0.45);
+				box-shadow:
+					0 0 28px rgba(220, 160, 40, 0.22),
+					inset 0 1px 0 rgba(255, 255, 255, 0.07);
+				text-shadow: 0 0 8px rgba(255, 210, 120, 0.7);
+			}
+		}
+	}
+
+	/* ── Zone basse ──────────────────────────────── */
+	.home-bottom {
+		gap: 0;
+	}
+
+	/* ── Projets actifs ──────────────────────────── */
+	.home-projects {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		justify-content: center;
+	}
+
+	.home-project-item {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 16px;
+		border-radius: 10px;
+		border: 1px solid rgba(100, 150, 255, 0.1);
+		background: rgba(30, 50, 120, 0.07);
+		color: rgba(190, 210, 255, 0.75);
+		text-decoration: none;
+		font-size: 0.88rem;
+		cursor: pointer;
+		transition: all 0.25s ease;
+
+		.galaxy-icon svg {
+			width: 14px;
+			height: 14px;
+			opacity: 0.6;
+		}
+
+		&:hover {
+			background: rgba(70, 110, 255, 0.14);
+			border-color: rgba(100, 150, 255, 0.28);
+			color: #ffffff;
+			box-shadow: 0 0 14px rgba(70, 110, 255, 0.18);
+		}
+	}
+}

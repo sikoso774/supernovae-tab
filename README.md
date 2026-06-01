@@ -1,115 +1,121 @@
-# Obsidian Beautitab
+# Tab Galaxy — Obsidian Plugin
 
-A plugin for Obsidian.MD that creates a customizable new tab view with beautiful backgrounds, quotes, search, and more.
+A galaxy-themed new tab experience for Obsidian. Every new tab opens an animated starfield with your time, greeting, search, recent files, and more — all floating in deep space.
 
-![A screenshot showing the beautitab screen](screenshots/screenshot1.png)
+![Tab Galaxy new tab screenshot](screenshots/screenshot1.png)
 
-## How to install
+---
 
-Plugin can be installed via the [official community plugins](https://obsidian.md/plugins?id=beautitab).
+## Features
 
-## Features and customizations
+### New Tab — Galaxy View
 
-Beautitab is built to be very customizable with every elements being able to be hidden or shown at the users discretion. This includes customization of the rotating backgrounds.
+Every new empty tab is replaced by the galaxy view:
 
-### Top left search
+- **Animated starfield** — twinkling stars, a shooting star, and color nebulae (violet + blue)
+- **Constellation lines** — stars connected to their nearest neighbors, softly pulsing
+- **Ringed planet** — a blue gas giant with a perspective ring in the corner
+- **Live clock** — large Orbitron display, 12h or 24h format
+- **Date** — displayed below the clock
+- **Greeting** — personalized message with time-of-day and your name
+- **Search bar** — opens your preferred search plugin
+- **Recent files** — your 5 most recently edited notes
+- **Bookmarks** — from all bookmarks or a specific group
+- **Quote** — a random quote from the built-in list or your own custom quotes
 
-When the top left search icon is clicked, this button opens a search.
+![Tab Galaxy settings screenshot](screenshots/screenshot-settings.png)
 
-The top left search icon can be shown/hidden via settings. Additionally, the behaviour of what occurs when the button is clicked can be configured to open one of a number of plugins.
+### Home Dashboard
 
-> [!TIP]
-> Another plugin you'd like to see as a provider? Open an issue!
+Create a note named `Home.md` in your vault. Whenever you open it, Tab Galaxy intercepts the navigation and displays a dedicated Home Dashboard instead:
 
-### Time
+- Same galaxy background as the new tab
+- **Navigation buttons** — configurable links to your key notes and folders
+- **Recent files** — your 5 most recently edited notes
+- **Active projects** — automatically lists notes with `Type: Project` and `status: active` in their frontmatter
+- **Tab protection** — clicking any file from the Home Dashboard opens it in a new tab, preserving the Home view
 
-Displays the current time in the middle of the screen and updates as time passes.
+> **Tip:** Use `{{today}}` as a navigation link path to automatically open today's daily note (format `YYYY-MM-DD`).
 
-The time can be shown/hidden via settings and configured to show in 12-hour format or 24-hour format.
+A pencil button (✏️) in the view header lets you edit `Home.md` directly without leaving the dashboard workflow.
 
-### Greeting
+---
 
-Displays a greeting in the middle of the screen.
+## Installation
 
-The greeting can be customized via settings or shown/hidden.
+### Via Community Plugins (recommended)
 
-### Inline search
+1. Open Obsidian Settings → Community Plugins
+2. Search for **Tab Galaxy**
+3. Click Install, then Enable
 
-When the search box in the middle of the screen is clicked, this button opens a search.
+### Manual
 
-The inline search can be shown/hidden via settings. Additionally, the behaviour of what occurs when the button is clicked can be configured to open one of a number of plugins.
+1. Download the latest release from [GitHub Releases](https://github.com/Sikoso774/obsidian-tab-galaxy/releases)
+2. Copy `main.js`, `manifest.json`, and `styles.css` into your vault at `.obsidian/plugins/obsidian-tab-galaxy/`
+3. Enable the plugin in Settings → Community Plugins
 
-> [!TIP]
-> Another plugin you'd like to see as a provider? Open a discussion!
-
-### Recent files
-
-Shows your 5 most recently updated files in the middle of the screen.
-
-The recent files list can be shown/hidden via settings.
-
-### Bookmarks
-
-Shows 5 bookmarks in the middle of the screen, either from all bookmarks or from a specific bookmark group.
-
-The bookmarks list can be shown/hidden via settings.
-
-### Quote
-
-Shows a random quote at the bottom of the screen.
-
-The quote can be shown/hidden via settings. It can also be configured to use the built in quotes, your own custom quotes, or a mix of both.
-
-### Background
-
-A random background is displayed on the Beautitab screen. This background will remain the same for the remainder of the day or when Obsidian is reloaded/relaunched. Various themes can be selected in settings.
-
-In addition to the built in themes, you can provide your own images from your local computer (desktop only) or from your vault.
-
-You may also select "transparent" or "transparent with shadows" mode if you would like your theme's background to show through Beautitab.
-
-#### Seasons and holidays (_Recommended_)
-
-This special theme will show diferent images depending on the time of the year. For example, will show fireworks on news years, pumpkins in the fall, and holiday images in December.
-
-> [!TIP]
-> If there is a theme you feel we should celebrate in the Seasons and holidays theme, open a discussion!
-
-#### Custom
-
-Will display a new box to provide the URL to your own image.
+---
 
 ## Settings
 
-All customizations can be completed within the settings screen.
+All settings are available under **Settings → Tab Galaxy**.
 
-![Settings screen within Obsidian](screenshots/settings.png)
+| Section | Options |
+| --- | --- |
+| **Search** | Show/hide top-left search button and inline search bar; choose the search provider plugin |
+| **Time** | Show/hide the clock; 12-hour or 24-hour format |
+| **Greeting** | Your name (used via `{{name}}`); show/hide greeting; custom greeting text |
+| **Recent files** | Show/hide the recent files section |
+| **Bookmarks** | Show/hide bookmarks; display all bookmarks or a specific group |
+| **Home Dashboard** | Edit the navigation links list |
+| **Quotes** | Show/hide quotes; choose between built-in quotes, your own, or both |
 
-## Screenshots and examples
+### Greeting placeholders
 
-<!-- ![Screenshot of Beautitab](screenshots/screenshot1.png)
+| Placeholder | Value |
+| --- | --- |
+| `{{greeting}}` | Time-of-day greeting (e.g. *Good morning*) |
+| `{{name}}` | Your name from settings (fallback: *explorer*) |
 
-![Screenshot of Beautitab](screenshots/screenshot2.png)
+### Supported search providers
 
-![Screenshot of Beautitab](screenshots/screenshot3.png)
+- Obsidian Core Quick Switcher
+- [Omnisearch](https://github.com/scambier/obsidian-omnisearch)
+- [Another Quick Switcher](https://github.com/tadashi-aikawa/obsidian-another-quick-switcher)
+- [Quick Switcher++](https://github.com/darlal/obsidian-switcher-plus)
 
-![Screenshot of Beautitab](screenshots/screenshot4.png)
+---
 
-![Screenshot of Beautitab](screenshots/screenshot5.png)
+## Home Dashboard — Active Projects
 
-![Screenshot of Beautitab](screenshots/screenshot6.png)
+Tab Galaxy automatically surfaces your active projects without any manual configuration. Just add this frontmatter to a note:
 
-![Screenshot of Beautitab](screenshots/screenshot8.png)
+```yaml
+---
+Type: Project
+status: active
+---
+```
 
-![Screenshot of Beautitab](screenshots/screenshot9.png) -->
+It will appear in the **Active projects** section of your Home Dashboard.
 
-## Reporting issues
-
-If you run into any issues with this plugin, please open an issue and incude as much detail as possible, including screenshots.
+---
 
 ## Credits
 
--   Images are pulled from http://www.unsplash.com
--   Quotes are pulled from the quoteable API: https://github.com/lukePeavey/quotable
--   Inspired by the excellent Chrome extension Momentum: https://momentumdash.com/
-- Inpired by Obsidian Plugin Beautiful Tab.
+- Inspired by [Beautitab](https://github.com/andrewmcgivery/obsidian-beautitab) by Andrew McGivery (MIT License) — architecture and plugin structure
+- Font: [Orbitron](https://fonts.google.com/specimen/Orbitron) via Google Fonts
+- Part of the [Nebulux](https://github.com/Sikoso774/nebulux) visual ecosystem
+
+---
+
+## Reporting Issues
+
+Open an issue on [GitHub](https://github.com/Sikoso774/obsidian-tab-galaxy/issues) with as much detail as possible — Obsidian version, plugin version, and a screenshot if relevant.
+
+---
+
+## License
+
+MIT
