@@ -4,17 +4,19 @@ import ConfirmModal from "src/ConfirmModal/ConfirmModal";
 import { CustomQuote } from "src/Types/Interfaces";
 
 class CustomQuotesModel extends Modal {
-	_onSave: Function;
+	_onSave: (quotes: CustomQuote[]) => void;
 	_plugin: TabGalaxyPlugin;
 	_customQuotes: CustomQuote[];
 
-	constructor(plugin: TabGalaxyPlugin, onSave: Function) {
+	constructor(
+		plugin: TabGalaxyPlugin,
+		onSave: (quotes: CustomQuote[]) => void
+	) {
 		super(plugin.app);
 		this._plugin = plugin;
 		this._onSave = onSave;
-		// Ugly way to deep clone the array and its objects
-		this._customQuotes = JSON.parse(
-			JSON.stringify(this._plugin.settings.customQuotes)
+		this._customQuotes = this._plugin.settings.customQuotes.map(
+			(quote) => ({ ...quote })
 		);
 	}
 
@@ -67,8 +69,8 @@ class CustomQuotesModel extends Modal {
 			const quoteTextInput = textCell.createEl("textarea", {
 				text: customQuote.text,
 			});
-			quoteTextInput.addEventListener("change", (e: any) => {
-				this._customQuotes[index].text = e.target?.value;
+			quoteTextInput.addEventListener("change", () => {
+				this._customQuotes[index].text = quoteTextInput.value;
 			});
 
 			const authorCell = tableRow.createEl("td");
@@ -76,8 +78,8 @@ class CustomQuotesModel extends Modal {
 				type: "text",
 				value: customQuote.author,
 			});
-			quoteAuthorInput.addEventListener("change", (e: any) => {
-				this._customQuotes[index].author = e.target?.value;
+			quoteAuthorInput.addEventListener("change", () => {
+				this._customQuotes[index].author = quoteAuthorInput.value;
 			});
 		});
 

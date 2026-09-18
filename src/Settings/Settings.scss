@@ -32,3 +32,14 @@
 		}
 	}
 }
+
+// Nav links modal reuses .customQuotesTable, whose inputs are 100% wide
+.customQuotesTable {
+	.galaxy-navlinks-label {
+		width: 160px;
+	}
+
+	.galaxy-navlinks-path {
+		width: 200px;
+	}
+}

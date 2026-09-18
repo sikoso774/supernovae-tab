@@ -3,18 +3,19 @@ import { Root, createRoot } from "react-dom/client";
 import { ObsidianContext } from "../React/Context/ObsidianAppContext";
 import Observable from "src/Utils/Observable";
 import TabGalaxyPlugin from "main";
+import { TabGalaxyPluginSettings } from "src/Settings/Settings";
 import HomeApp from "../React/Components/Home/Home";
 
 export const GALAXY_HOME_VIEW = "galaxy-home-view";
 
 export class HomeView extends ItemView {
 	root: Root | null = null;
-	settingsObservable: Observable;
+	settingsObservable: Observable<TabGalaxyPluginSettings>;
 	plugin: TabGalaxyPlugin;
 
 	constructor(
 		app: App,
-		settingsObservable: Observable,
+		settingsObservable: Observable<TabGalaxyPluginSettings>,
 		leaf: WorkspaceLeaf,
 		plugin: TabGalaxyPlugin
 	) {
@@ -45,7 +46,7 @@ export class HomeView extends ItemView {
 			if (!(file instanceof TFile)) return;
 			this.plugin.bypassHomeIntercept = true;
 			const leaf = this.app.workspace.getLeaf(true);
-			leaf.openFile(file, { state: { mode: "source" } });
+			void leaf.openFile(file, { state: { mode: "source" } });
 		});
 
 		this.root = createRoot(this.contentEl);

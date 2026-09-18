@@ -5,7 +5,7 @@ import { TIME_FORMAT } from "src/Types/Enums";
  */
 const getTime = (timeFormat: TIME_FORMAT) => {
 	const today = new Date();
-	let hours;
+	let hours: number | string;
 	if (timeFormat === TIME_FORMAT.TWELVE_HOUR) {
 		hours =
 			today.getHours() > 12

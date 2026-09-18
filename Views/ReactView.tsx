@@ -4,18 +4,19 @@ import ReactApp from "../React/Components/App/App";
 import { ObsidianContext } from "../React/Context/ObsidianAppContext";
 import Observable from "src/Utils/Observable";
 import TabGalaxyPlugin from "main";
+import { TabGalaxyPluginSettings } from "src/Settings/Settings";
 
 export const GALAXY_REACT_VIEW = "tab-galaxy-react-view";
 
 export class ReactView extends FileView {
 	root: Root | null = null;
 	app: App;
-	settingsObservable: Observable;
+	settingsObservable: Observable<TabGalaxyPluginSettings>;
 	plugin: TabGalaxyPlugin;
 
 	constructor(
 		app: App,
-		settingsObservable: Observable,
+		settingsObservable: Observable<TabGalaxyPluginSettings>,
 		leaf: WorkspaceLeaf,
 		plugin: TabGalaxyPlugin
 	) {

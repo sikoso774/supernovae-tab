@@ -101,9 +101,7 @@ const drawPlanet = (ctx: CanvasRenderingContext2D, w: number, h: number) => {
  * into an offscreen canvas instead of rebuilding gradients every frame.
  */
 const renderStaticLayer = (w: number, h: number): HTMLCanvasElement => {
-	const layer = document.createElement("canvas");
-	layer.width = w;
-	layer.height = h;
+	const layer = createEl("canvas", { attr: { width: w, height: h } });
 	const ctx = layer.getContext("2d");
 	if (!ctx) return layer;
 
@@ -132,9 +130,9 @@ const renderStaticLayer = (w: number, h: number): HTMLCanvasElement => {
 
 /** Pre-rendered star glow, drawn with globalAlpha instead of a per-star gradient. */
 const renderGlowSprite = (): HTMLCanvasElement => {
-	const sprite = document.createElement("canvas");
-	sprite.width = GLOW_SPRITE_SIZE;
-	sprite.height = GLOW_SPRITE_SIZE;
+	const sprite = createEl("canvas", {
+		attr: { width: GLOW_SPRITE_SIZE, height: GLOW_SPRITE_SIZE },
+	});
 	const ctx = sprite.getContext("2d");
 	if (!ctx) return sprite;
 	const c = GLOW_SPRITE_SIZE / 2;
@@ -342,7 +340,7 @@ const StarField = () => {
 		};
 
 		const tick = (now: number) => {
-			animationId = requestAnimationFrame(tick);
+			animationId = window.requestAnimationFrame(tick);
 			// Small tolerance: rAF timestamps jitter around the display refresh
 			if (now - lastFrameTime < FRAME_INTERVAL - 4) return;
 			lastFrameTime = now;
@@ -360,10 +358,10 @@ const StarField = () => {
 			if (shouldAnimate()) {
 				if (animationId === null) {
 					lastFrameTime = 0;
-					animationId = requestAnimationFrame(tick);
+					animationId = window.requestAnimationFrame(tick);
 				}
 			} else if (animationId !== null) {
-				cancelAnimationFrame(animationId);
+				window.cancelAnimationFrame(animationId);
 				animationId = null;
 			}
 		};
@@ -383,7 +381,7 @@ const StarField = () => {
 		updateLoop();
 
 		return () => {
-			if (animationId !== null) cancelAnimationFrame(animationId);
+			if (animationId !== null) window.cancelAnimationFrame(animationId);
 			if (resizeTimer !== null) window.clearTimeout(resizeTimer);
 			resizeObserver.disconnect();
 			intersectionObserver.disconnect();

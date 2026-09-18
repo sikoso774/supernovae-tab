@@ -6,7 +6,7 @@ import TabGalaxyPlugin from "main";
 import getTimeOfDayGreeting from "React/Utils/getTimeOfDayGreeting";
 import { getBookmarks } from "React/Utils/getBookmarks";
 import { TabGalaxyPluginSettings } from "src/Settings/Settings";
-import getQuote from "React/Utils/getQuote";
+import getQuote, { Quote } from "React/Utils/getQuote";
 import StarField from "../StarField/StarField";
 import Icon from "../Icon/Icon";
 import Clock from "../Clock/Clock";
@@ -16,13 +16,10 @@ const App = ({
 	settingsObservable,
 	plugin,
 }: {
-	settingsObservable: Observable;
+	settingsObservable: Observable<TabGalaxyPluginSettings>;
 	plugin: TabGalaxyPlugin;
 }) => {
-	const [quote, setQuote] = useState<{
-		content: string;
-		author: string;
-	} | null>(null);
+	const [quote, setQuote] = useState<Quote | null>(null);
 	const [settings, setSettings] = useState<TabGalaxyPluginSettings>(
 		settingsObservable.getValue()
 	);
@@ -40,10 +37,16 @@ const App = ({
 	);
 
 	useEffect(() => {
-		getQuote(settings.quoteSource, settings.customQuotes).then(
-			(newQuote: any) => setQuote(newQuote)
-		);
-	}, [setQuote, settings.quoteSource, settings.customQuotes]);
+		let cancelled = false;
+		getQuote(settings.quoteSource, settings.customQuotes)
+			.then((newQuote) => {
+				if (!cancelled) setQuote(newQuote);
+			})
+			.catch((e) => console.error("Supernovae Tab: quote failed", e));
+		return () => {
+			cancelled = true;
+		};
+	}, [settings.quoteSource, settings.customQuotes]);
 
 	useEffect(() => {
 		const unsubscribe = settingsObservable.onChange(
@@ -136,7 +139,7 @@ const App = ({
 													const leaf =
 														obsidian?.workspace.getMostRecentLeaf();
 													if (file instanceof TFile) {
-														leaf?.openFile(file);
+														void leaf?.openFile(file);
 													}
 												}}
 											>
@@ -168,7 +171,7 @@ const App = ({
 													const leaf =
 														obsidian?.workspace.getMostRecentLeaf();
 													if (file instanceof TFile) {
-														leaf?.openFile(file);
+														void leaf?.openFile(file);
 													}
 												}}
 											>

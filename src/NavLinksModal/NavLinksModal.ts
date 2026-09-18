@@ -12,9 +12,9 @@ class NavLinksModal extends Modal {
 		super(plugin.app);
 		this._plugin = plugin;
 		this._onSave = onSave;
-		this._links = JSON.parse(
-			JSON.stringify(this._plugin.settings.homeNavLinks)
-		);
+		this._links = this._plugin.settings.homeNavLinks.map((link) => ({
+			...link,
+		}));
 	}
 
 	onOpen() {
@@ -68,21 +68,21 @@ class NavLinksModal extends Modal {
 			const labelInput = labelCell.createEl("input", {
 				type: "text",
 				value: link.label,
+				cls: "galaxy-navlinks-label",
 			});
-			labelInput.style.width = "160px";
-			labelInput.addEventListener("input", (e: any) => {
-				this._links[index].label = e.target.value;
+			labelInput.addEventListener("input", () => {
+				this._links[index].label = labelInput.value;
 			});
 
 			const pathCell = row.createEl("td");
 			const pathInput = pathCell.createEl("input", {
 				type: "text",
 				value: link.path,
+				cls: "galaxy-navlinks-path",
+				placeholder: "Nom de la note ou {{today}}",
 			});
-			pathInput.style.width = "200px";
-			pathInput.placeholder = "Nom de la note ou {{today}}";
-			pathInput.addEventListener("input", (e: any) => {
-				this._links[index].path = e.target.value;
+			pathInput.addEventListener("input", () => {
+				this._links[index].path = pathInput.value;
 			});
 		});
 
