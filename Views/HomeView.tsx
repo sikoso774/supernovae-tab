@@ -63,5 +63,6 @@ export class HomeView extends ItemView {
 
 	async onClose() {
 		this.root?.unmount();
+		this.root = null;
 	}
 }

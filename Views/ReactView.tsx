@@ -53,5 +53,6 @@ export class ReactView extends FileView {
 
 	async onClose() {
 		this.root?.unmount();
+		this.root = null;
 	}
 }

@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-09-19
+
+### Fixed
+
+#### Mobile stability (iOS / Android)
+- Crash from memory saturation on iOS: the starfield no longer rebuilds every gradient each frame. Nebulae and the planet are pre-rendered once per resize, and star glows use a cached sprite
+- The animation loop pauses when the tab is hidden, off-screen or the app is in the background
+- On mobile: frame rate capped at 30 fps and fewer stars
+- Resize events are debounced (iOS keyboard and rotation bursts), and zero-sized canvases are ignored
+- Recent files and active projects are recomputed only on vault or metadata changes, not every second
+- The clock is isolated in its own component, so the 1-second tick no longer re-renders the whole view
+- `backdrop-filter` blur is disabled on mobile and replaced with a semi-opaque fill
+- The esbuild live-reload connection is never opened on mobile
+- The production build is minified
+
+#### Robustness
+- No crash when the core Bookmarks plugin is disabled
+- No crash on unknown icon names
+- Settings observable: unsubscribing no longer removes every other subscriber
+- `{{today}}` nav link uses the local date instead of UTC
+- Errors in workspace event handlers are caught and logged
+
 ## [1.0.0] - 2026-06-01
 
 ### Added

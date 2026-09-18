@@ -1,6 +1,6 @@
 {
 	"name": "supernovae-tab",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A galaxy-themed new tab for Obsidian — animated starfield, space aesthetics, and your vault at the center of the universe.",
 	"main": "dist/main.js",
 	"scripts": {

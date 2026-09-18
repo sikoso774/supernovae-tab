@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useObsidian } from "../../Context/ObsidianAppContext";
-import { TFile, getIcon } from "obsidian";
-import getTime from "React/Utils/getTime";
-import getDate from "React/Utils/getDate";
+import { TFile } from "obsidian";
 import Observable from "src/Utils/Observable";
 import TabGalaxyPlugin from "main";
 import getTimeOfDayGreeting from "React/Utils/getTimeOfDayGreeting";
@@ -10,18 +8,9 @@ import { getBookmarks } from "React/Utils/getBookmarks";
 import { TabGalaxyPluginSettings } from "src/Settings/Settings";
 import getQuote from "React/Utils/getQuote";
 import StarField from "../StarField/StarField";
-
-const Icon = ({ name }: { name: string }) => {
-	const iconText = new XMLSerializer().serializeToString(
-		getIcon(name) || new Node()
-	);
-	return (
-		<span
-			className="galaxy-icon"
-			dangerouslySetInnerHTML={{ __html: iconText }}
-		></span>
-	);
-};
+import Icon from "../Icon/Icon";
+import Clock from "../Clock/Clock";
+import useVaultFiles, { getRecentMarkdownFiles } from "React/Utils/useVaultFiles";
 
 const App = ({
 	settingsObservable,
@@ -37,37 +26,18 @@ const App = ({
 	const [settings, setSettings] = useState<TabGalaxyPluginSettings>(
 		settingsObservable.getValue()
 	);
-	const [time, setTime] = useState(getTime(settings.timeFormat));
-	const [date, setDate] = useState(getDate());
 	const mainDivRef = useRef<HTMLDivElement>(null);
 
 	const obsidian = useObsidian();
 
-	const allVaultFiles = obsidian?.vault.getAllLoadedFiles();
-	const latestModifiedMarkdownFiles = useMemo(() => {
-		const files = allVaultFiles?.filter(
-			(file) => file instanceof TFile && file.extension === "md"
-		);
-		files?.sort((a, b) =>
-			a instanceof TFile && b instanceof TFile
-				? b.stat.mtime - a.stat.mtime
-				: 0
-		);
-		return files?.slice(0, 5);
-	}, [allVaultFiles]);
+	const latestModifiedMarkdownFiles = useVaultFiles(obsidian, (app) =>
+		getRecentMarkdownFiles(app)
+	);
 
 	const bookmarks = useMemo(
 		() => getBookmarks(obsidian, settings).slice(0, 5),
 		[obsidian, settings]
 	);
-
-	useEffect(() => {
-		const timer = setInterval(() => {
-			setTime(getTime(settings.timeFormat));
-			setDate(getDate());
-		}, 1000);
-		return () => clearInterval(timer);
-	}, [setTime, settings]);
 
 	useEffect(() => {
 		getQuote(settings.quoteSource, settings.customQuotes).then(
@@ -80,7 +50,7 @@ const App = ({
 			(newSettings: TabGalaxyPluginSettings) => setSettings(newSettings)
 		);
 		return () => unsubscribe();
-	}, [setSettings]);
+	}, [settingsObservable]);
 
 	useEffect(() => {
 		mainDivRef?.current?.focus();
@@ -120,10 +90,7 @@ const App = ({
 				</div>
 				<div className="galaxy-center">
 					{settings.showTime && (
-						<div className="galaxy-time">{time}</div>
-					)}
-					{settings.showTime && (
-						<div className="galaxy-date">{date}</div>
+						<Clock timeFormat={settings.timeFormat} />
 					)}
 					{settings.showGreeting && (
 						<div className="galaxy-greeting">
