@@ -12,3 +12,22 @@
 	box-shadow: none;
 	text-align: right;
 }
+
+// Mobile (iOS WKWebView / Android WebView): backdrop-filter over an animated
+// canvas forces a GPU recomposite every frame and exhausts memory on iOS.
+// Replace the blur with a semi-opaque fill that keeps the glass look.
+body.is-mobile .tab-galaxy {
+	.galaxy-search-wrapper,
+	.home-nav-btn {
+		-webkit-backdrop-filter: none;
+		backdrop-filter: none;
+		background: rgba(18, 26, 52, 0.72);
+	}
+
+	.galaxy-search-wrapper,
+	.home-nav-btn,
+	.galaxy-recentlyedited-file,
+	.home-project-item {
+		min-height: 44px;
+	}
+}

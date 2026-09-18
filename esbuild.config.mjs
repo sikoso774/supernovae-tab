@@ -16,7 +16,8 @@ const prod = process.argv[2] === "production";
 const outdir = prod
 	? "./dist/"
 	: // Assumed local path. Update this to the path of your local development vault
-	  "C:/Users/zolen/Documents/1.Obsidian_Notes/Obsidian - Zoléni/.obsidian/plugins/obsidian-tab-galaxy/";
+	  process.env.SUPERNOVAE_VAULT_PLUGIN_DIR ??
+	  "C:/Users/zolen/Documents/1.Obsidian_Notes/ZKZ/.obsidian/plugins/obsidian-tab-galaxy/";
 
 const context = await esbuild.context({
 	banner: {
@@ -46,6 +47,7 @@ const context = await esbuild.context({
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
 	minifySyntax: true,
+	minify: prod,
 	plugins: [
 		sassPlugin(),
 		copyStaticFiles({

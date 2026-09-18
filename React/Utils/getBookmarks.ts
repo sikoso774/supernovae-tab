@@ -1,4 +1,4 @@
-import { App, TAbstractFile } from "obsidian";
+import { App, TFile } from "obsidian";
 import { TabGalaxyPluginSettings } from "src/Settings/Settings";
 import { BOOKMARK_SOURCE } from "src/Types/Enums";
 
@@ -6,7 +6,7 @@ import { BOOKMARK_SOURCE } from "src/Types/Enums";
  * Recursively gets all bookmarks
  * @param items
  */
-const flattenBookmarks = (items: any[]) => {
+const flattenBookmarks = (items: any[] = []) => {
 	let flattedBookmarks: any[] = [];
 
 	items.forEach((item) => {
@@ -27,14 +27,12 @@ const flattenBookmarks = (items: any[]) => {
  * @param title
  * @param items
  */
-const getBookmarksByGroupName = (title: string, items: any[]) => {
+const getBookmarksByGroupName = (title: string, items: any[] = []) => {
 	let flattedBookmarks: any[] = [];
 
 	items.forEach((item) => {
 		if (item.type === "group") {
-			console.log(`Found group with title ${item.title}`);
 			if (item.title === title) {
-				console.log("found match!", item.items);
 				flattedBookmarks = flattenBookmarks(item.items);
 			} else {
 				const bookmarks = getBookmarksByGroupName(title, item.items);
@@ -49,6 +47,17 @@ const getBookmarksByGroupName = (title: string, items: any[]) => {
 };
 
 /**
+ * Raw bookmark items, or an empty list when the core Bookmarks plugin is
+ * disabled (its instance is then missing, notably on mobile).
+ * @param app
+ */
+const getBookmarkItems = (app: App | undefined): any[] => {
+	// @ts-ignore
+	const items = app?.internalPlugins?.plugins?.bookmarks?.instance?.items;
+	return Array.isArray(items) ? items : [];
+};
+
+/**
  * Gets a list of bookmarks depending on settings. It will either get all bookmarks or bookmarks in a specific group.
  * @param app
  * @param settings
@@ -56,9 +65,8 @@ const getBookmarksByGroupName = (title: string, items: any[]) => {
 export const getBookmarks = (
 	app: App | undefined,
 	settings: TabGalaxyPluginSettings
-): TAbstractFile[] => {
-	// @ts-ignore
-	let bookmarks = app?.internalPlugins.plugins.bookmarks.instance.items;
+): TFile[] => {
+	let bookmarks = getBookmarkItems(app);
 
 	if (settings.bookmarkSource === BOOKMARK_SOURCE.GROUP) {
 		bookmarks = getBookmarksByGroupName(settings.bookmarkGroup, bookmarks);
@@ -66,11 +74,11 @@ export const getBookmarks = (
 		bookmarks = flattenBookmarks(bookmarks);
 	}
 
-	const bookmarkFiles = bookmarks.map((bookmark: any) =>
-		app?.vault.getAbstractFileByPath(bookmark.path)
-	);
-
-	return bookmarkFiles;
+	return bookmarks
+		.map((bookmark: any) =>
+			app?.vault.getAbstractFileByPath(bookmark.path)
+		)
+		.filter((file: unknown): file is TFile => file instanceof TFile);
 };
 
 /**
@@ -78,7 +86,7 @@ export const getBookmarks = (
  * @param items
  * @param parentPath
  */
-const flattenBookmarkGroups = (items: any[], parentPath = null) => {
+const flattenBookmarkGroups = (items: any[] = [], parentPath = null) => {
 	let flattedGroups: any[] = [];
 
 	items.forEach((item) => {
@@ -101,8 +109,5 @@ const flattenBookmarkGroups = (items: any[], parentPath = null) => {
  * @param app
  */
 export const getBookmarkGroups = (app: App) => {
-	// @ts-ignore
-	let bookmarks = app?.internalPlugins.plugins.bookmarks.instance.items;
-
-	return flattenBookmarkGroups(bookmarks);
+	return flattenBookmarkGroups(getBookmarkItems(app));
 };

@@ -34,7 +34,7 @@ class Observable {
 
 		return () => {
 			this.subscribers = this.subscribers.filter(
-				(value) => value === callback
+				(value) => value !== callback
 			);
 		};
 	}
