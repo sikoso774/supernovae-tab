@@ -1,6 +1,6 @@
 import { getBookmarkGroups } from "React/Utils/getBookmarks";
 import TabGalaxyPlugin from "main";
-import { App, PluginSettingTab, Setting } from "obsidian";
+import { App, Notice, PluginSettingTab, Setting } from "obsidian";
 import ChooseSearchProvider from "src/ChooseSearchProvider/ChooseSearchProvider";
 import CustomQuotesModel from "src/CustomQuotesModel/CustomQuotesModel";
 import NavLinksModal from "src/NavLinksModal/NavLinksModal";
@@ -24,6 +24,7 @@ export const SEARCH_PROVIDER = [
 ];
 
 export interface TabGalaxyPluginSettings {
+	disableOnMobile: boolean;
 	userName: string;
 	showTopLeftSearchButton: boolean;
 	topLeftSearchProvider: SearchProvider;
@@ -44,6 +45,8 @@ export interface TabGalaxyPluginSettings {
 }
 
 export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
+	// The animated view is not reliable on phones and tablets yet
+	disableOnMobile: true,
 	userName: "",
 	showTopLeftSearchButton: true,
 	topLeftSearchProvider: DEFAULT_SEARCH_PROVIDER,
@@ -81,6 +84,25 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 
 		containerEl.empty();
+
+		/****************************************
+		 * Mobile settings
+		 ***************************************/
+		new Setting(containerEl).setHeading().setName(`Mobile settings`);
+
+		new Setting(containerEl)
+			.setName("Disable on mobile")
+			.setDesc(
+				`The galaxy view is not stable on phones and tablets yet. When enabled, the plugin does nothing on mobile. Restart the app to apply.`
+			)
+			.addToggle((component) => {
+				component.setValue(this.plugin.settings.disableOnMobile);
+				component.onChange((value) => {
+					this.plugin.settings.disableOnMobile = value;
+					this.plugin.updateSettings();
+					new Notice("Restart the app to apply this change.");
+				});
+			});
 
 		/****************************************
 		 * Search settings

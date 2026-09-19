@@ -31,6 +31,12 @@ export default class TabGalaxyPlugin extends Plugin {
 
 		this.settingsObservable = new Observable(this.settings);
 
+		// Keep only the settings tab on mobile, so the option can be turned back on
+		if (Platform.isMobile && this.settings.disableOnMobile) {
+			this.addSettingTab(new TabGalaxyPluginSettingTab(this.app, this));
+			return;
+		}
+
 		this.registerView(
 			GALAXY_REACT_VIEW,
 			(leaf) =>

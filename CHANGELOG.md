@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-09-19
+
+### ⚠️ Mobile: unstable
+
+Supernovae Tab is **not stable on phones and tablets** (iOS and Android). The animated
+view can still exhaust the memory of the mobile app, especially on iOS.
+
+### Added
+- **Disable on mobile** setting (Settings → Supernovae Tab → Mobile settings), **enabled by default**.
+  On mobile, the plugin then only registers its settings tab: no galaxy view, no Home
+  dashboard interception, new tabs stay Obsidian's default. Desktop is unaffected.
+  Turn it off at your own risk to use the plugin on mobile; restart the app to apply.
+
 ## [1.1.0] - 2026-09-19
 
 ### Fixed
