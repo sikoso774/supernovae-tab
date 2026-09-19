@@ -41,6 +41,14 @@ A pencil button (✏️) in the view header lets you edit `Home.md` directly wit
 
 ---
 
+## Mobile support
+
+> ⚠️ **Supernovae Tab is not stable on phones and tablets yet** (iOS and Android): the animated view can exhaust the mobile app's memory.
+>
+> Since 1.2.0 the plugin is **disabled on mobile by default**: it only keeps its settings tab there, and new tabs stay Obsidian's default. You can turn **Settings → Supernovae Tab → Disable on mobile** off at your own risk (restart the app to apply). Desktop is unaffected.
+
+---
+
 ## Installation
 
 ### Via Community Plugins (recommended)
@@ -63,6 +71,7 @@ All settings are available under **Settings → Supernovae Tab**.
 
 | Section | Options |
 | --- | --- |
+| **Mobile** | Disable the plugin on phones and tablets (on by default) |
 | **Search** | Show/hide top-left search button and inline search bar; choose the search provider plugin |
 | **Time** | Show/hide the clock; 12-hour or 24-hour format |
 | **Greeting** | Your name (used via `{{name}}`); show/hide greeting; custom greeting text |
