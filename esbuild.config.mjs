@@ -59,9 +59,10 @@ const context = await esbuild.context({
 	define: {
 		"process.env.NODE_ENV": prod ? '"production"' : '"development"',
 		"process.env.PLUGIN_VERSION": `"${packageJson.version}"`,
-		"process.env.EMULATE_MOBILE": prod
-			? "false"
-			: process.argv.includes("--mobile").toString(),
+		// Defined as a string literal, like any process.env value
+		"process.env.EMULATE_MOBILE": JSON.stringify(
+			String(!prod && process.argv.includes("--mobile"))
+		),
 	},
 });
 

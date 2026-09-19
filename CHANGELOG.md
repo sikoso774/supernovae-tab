@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.1] - 2026-09-19
+## [1.1.0] - 2026-09-19
 
 ### Fixed
 
@@ -19,6 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `backdrop-filter` blur is disabled on mobile and replaced with a semi-opaque fill
 - The esbuild live-reload connection is never opened on mobile
 - The production build is minified
+
+#### Community review fixes
+- Removed the Google Fonts `<link>` injection; the Orbitron font is embedded in `styles.css`
+- Nav links modal: CSS classes instead of inline styles
+- Typed internal Obsidian APIs (commands, plugins, bookmarks); no more `any` or `@ts-ignore`
+- Promises handled everywhere (`void` / `.catch`), `window.*` timers for popout windows
+- Sentence case for UI text; removed unused imports and console logging
+- `minAppVersion` raised to 1.7.2 (APIs actually used); `versions.json` cleaned of inherited entries
+- Dependencies: removed unused `electron`, upgraded `esbuild` and `obsidian` typings (0 audit advisories)
+- Release workflow publishes build provenance attestations
 
 #### Robustness
 - No crash when the core Bookmarks plugin is disabled

@@ -10,8 +10,6 @@ import {
 	TIME_FORMAT,
 } from "src/Types/Enums";
 import { CustomQuote, NavLink, SearchProvider } from "src/Types/Interfaces";
-import capitalizeFirstLetter from "src/Utils/capitalizeFirstLetter";
-import ConfirmModal from "src/ConfirmModal/ConfirmModal";
 
 const DEFAULT_SEARCH_PROVIDER: SearchProvider = {
 	command: "switcher:open",
@@ -100,10 +98,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				);
 				component.onChange((value) => {
 					this.plugin.settings.showTopLeftSearchButton = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
+					this.plugin.updateSettings();
 					this.display();
 				});
 			});
@@ -129,10 +124,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 						this.plugin.settings,
 						(result) => {
 							this.plugin.settings.topLeftSearchProvider = result;
-							this.plugin.settingsObservable.setValue(
-								this.plugin.settings
-							);
-							this.plugin.saveSettings();
+							this.plugin.updateSettings();
 							this.display();
 						}
 					).open();
@@ -148,10 +140,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.setValue(this.plugin.settings.showInlineSearch);
 				component.onChange((value) => {
 					this.plugin.settings.showInlineSearch = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
+					this.plugin.updateSettings();
 					this.display();
 				});
 			});
@@ -176,10 +165,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 						this.plugin.settings,
 						(result) => {
 							this.plugin.settings.inlineSearchProvider = result;
-							this.plugin.settingsObservable.setValue(
-								this.plugin.settings
-							);
-							this.plugin.saveSettings();
+							this.plugin.updateSettings();
 							this.display();
 						}
 					).open();
@@ -200,10 +186,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.setValue(this.plugin.settings.showTime);
 				component.onChange((value) => {
 					this.plugin.settings.showTime = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
+					this.plugin.updateSettings();
 					this.display();
 				});
 			});
@@ -225,10 +208,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 
 				component.onChange((value: TIME_FORMAT) => {
 					this.plugin.settings.timeFormat = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
+					this.plugin.updateSettings();
 					this.display();
 				});
 			});
@@ -244,14 +224,11 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				`Your name, used in the greeting via the {{name}} placeholder.`
 			)
 			.addText((component) => {
-				component.setPlaceholder("explorer");
+				component.setPlaceholder("Explorer");
 				component.setValue(this.plugin.settings.userName);
 				component.onChange((value) => {
 					this.plugin.settings.userName = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
+					this.plugin.updateSettings();
 				});
 			});
 
@@ -264,10 +241,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.setValue(this.plugin.settings.showGreeting);
 				component.onChange((value) => {
 					this.plugin.settings.showGreeting = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
+					this.plugin.updateSettings();
 					this.display();
 				});
 			});
@@ -281,10 +255,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.setValue(this.plugin.settings.greetingText);
 				component.onChange((value) => {
 					this.plugin.settings.greetingText = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
+					this.plugin.updateSettings();
 				});
 			});
 
@@ -302,10 +273,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.setValue(this.plugin.settings.showRecentFiles);
 				component.onChange((value) => {
 					this.plugin.settings.showRecentFiles = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
+					this.plugin.updateSettings();
 					this.display();
 				});
 			});
@@ -324,10 +292,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.setValue(this.plugin.settings.showBookmarks);
 				component.onChange((value) => {
 					this.plugin.settings.showBookmarks = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
+					this.plugin.updateSettings();
 					this.display();
 				});
 			});
@@ -347,10 +312,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.setValue(this.plugin.settings.bookmarkSource);
 				component.onChange((value: BOOKMARK_SOURCE) => {
 					this.plugin.settings.bookmarkSource = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
+					this.plugin.updateSettings();
 					this.display();
 				});
 			});
@@ -365,12 +327,9 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 					});
 
 					component.setValue(this.plugin.settings.bookmarkGroup);
-					component.onChange((value: BOOKMARK_SOURCE) => {
+					component.onChange((value) => {
 						this.plugin.settings.bookmarkGroup = value;
-						this.plugin.settingsObservable.setValue(
-							this.plugin.settings
-						);
-						this.plugin.saveSettings();
+						this.plugin.updateSettings();
 						this.display();
 					});
 				});
@@ -379,7 +338,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 		/****************************************
 		 * Home Dashboard settings
 		 ***************************************/
-		new Setting(containerEl).setHeading().setName(`Home Dashboard settings`);
+		new Setting(containerEl).setHeading().setName(`Home dashboard settings`);
 
 		new Setting(containerEl)
 			.setName("Navigation links")
@@ -393,10 +352,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 						this.plugin,
 						(modified: NavLink[]) => {
 							this.plugin.settings.homeNavLinks = modified;
-							this.plugin.settingsObservable.setValue(
-								this.plugin.settings
-							);
-							this.plugin.saveSettings();
+							this.plugin.updateSettings();
 							this.display();
 						}
 					).open();
@@ -417,10 +373,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.setValue(this.plugin.settings.showQuote);
 				component.onChange((value) => {
 					this.plugin.settings.showQuote = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
+					this.plugin.updateSettings();
 					this.display();
 				});
 			});
@@ -438,10 +391,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.setValue(this.plugin.settings.quoteSource);
 				component.onChange((value: QUOTE_SOURCE) => {
 					this.plugin.settings.quoteSource = value;
-					this.plugin.settingsObservable.setValue(
-						this.plugin.settings
-					);
-					this.plugin.saveSettings();
+					this.plugin.updateSettings();
 					this.display();
 				});
 			});
@@ -458,7 +408,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 						(modifiedCustomQuotes: CustomQuote[]) => {
 							this.plugin.settings.customQuotes =
 								modifiedCustomQuotes;
-							this.plugin.saveSettings();
+							this.plugin.updateSettings();
 							this.display();
 						}
 					).open();

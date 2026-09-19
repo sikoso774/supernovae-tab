@@ -17,7 +17,7 @@ const Home = ({
 	settingsObservable,
 	plugin,
 }: {
-	settingsObservable: Observable;
+	settingsObservable: Observable<TabGalaxyPluginSettings>;
 	plugin: TabGalaxyPlugin;
 }) => {
 	const [settings, setSettings] = useState<TabGalaxyPluginSettings>(
@@ -34,13 +34,17 @@ const Home = ({
 	const resolvePath = (path: string) =>
 		path === "{{today}}" ? moment().format("YYYY-MM-DD") : path;
 
+	const openTFile = (file: TFile) => {
+		void obsidian?.workspace.getMostRecentLeaf()?.openFile(file);
+	};
+
 	const openFile = (path: string) => {
 		const resolved = resolvePath(path);
 		const file =
 			obsidian?.metadataCache.getFirstLinkpathDest(resolved, "") ??
 			obsidian?.vault.getAbstractFileByPath(`${resolved}.md`);
 		if (file instanceof TFile) {
-			obsidian?.workspace.getMostRecentLeaf()?.openFile(file);
+			openTFile(file);
 		} else {
 			new Notice(`Note introuvable : ${resolved}`);
 		}
@@ -99,11 +103,7 @@ const Home = ({
 								<a
 									key={file.path}
 									className="galaxy-recentlyedited-file"
-									onClick={() =>
-										obsidian?.workspace
-											.getMostRecentLeaf()
-											?.openFile(file)
-									}
+									onClick={() => openTFile(file)}
 								>
 									<Icon name="file" />
 									<span className="galaxy-recentlyedited-file-name">
@@ -125,11 +125,7 @@ const Home = ({
 									<a
 										key={file.path}
 										className="home-project-item"
-										onClick={() =>
-											obsidian?.workspace
-												.getMostRecentLeaf()
-												?.openFile(file)
-										}
+										onClick={() => openTFile(file)}
 									>
 										<Icon name="file-text" />
 										<span>{file.basename}</span>

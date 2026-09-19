@@ -1,11 +1,13 @@
+type Subscriber<T> = (value: T) => void;
+
 /**
  * An implementation of an Observable to subscribe to updates to a value
  */
-class Observable {
-	private value;
-	private subscribers: Function[] = [];
+class Observable<T extends object> {
+	private value: T;
+	private subscribers: Subscriber<T>[] = [];
 
-	constructor(value: any) {
+	constructor(value: T) {
 		this.value = value;
 	}
 
@@ -13,7 +15,7 @@ class Observable {
 	 * Set the value
 	 * @param value
 	 */
-	setValue(value: any) {
+	setValue(value: T) {
 		this.value = value;
 		this.subscribers.forEach((callback) => callback({ ...this.value }));
 	}
@@ -21,7 +23,7 @@ class Observable {
 	/**
 	 * Get the current value
 	 */
-	getValue() {
+	getValue(): T {
 		return this.value;
 	}
 
@@ -29,7 +31,7 @@ class Observable {
 	 * Subscribe to changes in the value. Function returns a "unsubscribe" function to clean up as nessessary.
 	 * @param callback
 	 */
-	onChange(callback: Function) {
+	onChange(callback: Subscriber<T>) {
 		this.subscribers.push(callback);
 
 		return () => {
