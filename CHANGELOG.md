@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Navigation link groups**: links sharing a *Group* are shown on their own labelled row
   (e.g. a "Cursus MIAGE" row under the main buttons).
 - **Due flashcards badge**: tick *Due* on a navigation link to show how many Spaced Repetition
-  cards are due today (read from the `<!--SR:…-->` markers of notes tagged `#flashcards`; the badge is
+  cards are due today or new, like the Spaced Repetition status bar (read from the `<!--SR:…-->` markers
+  and the card syntax of notes tagged `#flashcards`; the badge is
   hidden when nothing is due).
 - **Take over Home.md** setting (on by default). Turn it off to open the real `Home.md` note
   (Dataview blocks, charts); the "Open home dashboard" command and the ribbon icon still open

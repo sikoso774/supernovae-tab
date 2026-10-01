@@ -35,7 +35,7 @@ Create a note named `Home.md` in your vault. Whenever you open it, Supernovae Ta
 - **Active projects** — automatically lists notes with `Type: Project` and `status: active` in their frontmatter
 - **Writing streak and calendar** — a big "days in a row" counter and a one-square-per-day calendar of the notes you created (hover for details, click to open the day's journal note)
 - **Link groups** — navigation links sharing a group get their own labelled row
-- **Due flashcards badge** — optional counter of Spaced Repetition cards due today on a navigation button
+- **Flashcards badge** — optional counter of Spaced Repetition cards to review (due or new) on a navigation button
 - **Tab protection** — clicking any file from the Home Dashboard opens it in a new tab, preserving the Home view
 
 > **Tip:** Use `{{today}}` as a navigation link path to automatically open today's daily note (format `YYYY-MM-DD`).
@@ -126,9 +126,9 @@ The dashboard shows how regularly you write. Each note counts once, on the day g
 
 ---
 
-## Home Dashboard — Due flashcards badge
+## Home Dashboard — Flashcards badge
 
-Tick **Due** on a navigation link (Settings → Navigation links → Edit) to show the number of flashcards due today on that button. The count is read from the `<!--SR:!YYYY-MM-DD,…-->` markers that [Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) writes next to each card, in notes tagged `#flashcards` or `#flashcards/…`. New, never-reviewed cards are not counted. The badge disappears when nothing is due.
+Tick **Due** on a navigation link (Settings → Navigation links → Edit) to show the number of flashcards to review on that button, the same figure as the [Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) status bar: cards due today plus new, never-reviewed cards, in notes tagged `#flashcards` or `#flashcards/…`. Due cards are read from the `<!--SR:!YYYY-MM-DD,…-->` markers the plugin writes next to each card; new cards are the cards of a note that have no marker yet, counted with the plugin's default syntax (`::`, `:::`, `?`, `??`, `==cloze==`), so it is an estimate if you changed the separators. The badge disappears when there is nothing to review.
 
 ---
 
