@@ -77,13 +77,17 @@ const useDueCards = (app: App | undefined): string[] => {
 			app.vault.on("delete", onChange),
 			app.vault.on("rename", onChange),
 		];
-		const metaRef = app.metadataCache.on("changed", onChange);
+		// "resolved" fires once the whole vault is indexed (app start, large sync)
+		const metaRefs: EventRef[] = [
+			app.metadataCache.on("changed", onChange),
+			app.metadataCache.on("resolved", onChange),
+		];
 
 		return () => {
 			disposed = true;
 			if (timer !== null) window.clearTimeout(timer);
 			refs.forEach((ref) => app.vault.offref(ref));
-			app.metadataCache.offref(metaRef);
+			metaRefs.forEach((ref) => app.metadataCache.offref(ref));
 		};
 	}, [app]);
 

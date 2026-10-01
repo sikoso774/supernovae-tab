@@ -43,12 +43,16 @@ export const useVaultValue = <T>(
 			app.vault.on("rename", refresh),
 			app.vault.on("modify", refresh),
 		];
-		const metaRef = app.metadataCache.on("changed", refresh);
+		// "resolved" fires once the whole vault is indexed (app start, large sync)
+		const metaRefs: EventRef[] = [
+			app.metadataCache.on("changed", refresh),
+			app.metadataCache.on("resolved", refresh),
+		];
 
 		return () => {
 			if (timer !== null) window.clearTimeout(timer);
 			vaultRefs.forEach((ref) => app.vault.offref(ref));
-			app.metadataCache.offref(metaRef);
+			metaRefs.forEach((ref) => app.metadataCache.offref(ref));
 		};
 	}, [app, delay, ...deps]);
 
