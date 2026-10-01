@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { App, EventRef, TFile, getAllTags } from "obsidian";
-import { extractReviewDates, isFlashcardTag } from "React/Utils/reviewMarkers";
+import {
+	countNewCards,
+	extractReviewDates,
+	isFlashcardTag,
+} from "React/Utils/reviewMarkers";
 import { isTemplatePath } from "React/Utils/vaultFilters";
 
 // Spaced Repetition rewrites a note after every answer: wait for a calm moment
@@ -9,6 +13,14 @@ const REFRESH_DELAY = 1500;
 interface CachedNote {
 	mtime: number;
 	dates: string[];
+	fresh: number;
+}
+
+export interface DueCards {
+	/** Scheduled review date of every card already reviewed once. */
+	dates: string[];
+	/** Cards never reviewed. */
+	fresh: number;
 }
 
 const flashcardNotes = (app: App): TFile[] =>
@@ -19,12 +31,13 @@ const flashcardNotes = (app: App): TFile[] =>
 	});
 
 /**
- * Scheduled review dates of every flashcard note. A note is read again only
- * when its modification time changes; the caller derives "due today" from the
- * dates, so the count stays right after midnight without any re-read.
+ * Scheduled review dates and new cards of every flashcard note. A note is read
+ * again only when its modification time changes; the caller derives "due
+ * today" from the dates, so the count stays right after midnight without any
+ * re-read.
  */
-const useDueCards = (app: App | undefined): string[] => {
-	const [dates, setDates] = useState<string[]>([]);
+const useDueCards = (app: App | undefined): DueCards => {
+	const [cards, setCards] = useState<DueCards>({ dates: [], fresh: 0 });
 	const cache = useRef(new Map<string, CachedNote>());
 
 	useEffect(() => {
@@ -39,23 +52,24 @@ const useDueCards = (app: App | undefined): string[] => {
 				if (!known.has(path)) cache.current.delete(path);
 			});
 
-			const all: string[] = [];
+			const dates: string[] = [];
+			let fresh = 0;
 			for (const note of notes) {
-				const cached = cache.current.get(note.path);
-				if (cached && cached.mtime === note.stat.mtime) {
-					all.push(...cached.dates);
-					continue;
+				let entry = cache.current.get(note.path);
+				if (!entry || entry.mtime !== note.stat.mtime) {
+					const text = await app.vault.cachedRead(note);
+					const found = extractReviewDates(text);
+					entry = {
+						mtime: note.stat.mtime,
+						dates: found,
+						fresh: countNewCards(text, found.length),
+					};
+					cache.current.set(note.path, entry);
 				}
-				const found = extractReviewDates(
-					await app.vault.cachedRead(note)
-				);
-				cache.current.set(note.path, {
-					mtime: note.stat.mtime,
-					dates: found,
-				});
-				all.push(...found);
+				dates.push(...entry.dates);
+				fresh += entry.fresh;
 			}
-			if (!disposed) setDates(all);
+			if (!disposed) setCards({ dates, fresh });
 		};
 
 		const schedule = (delay: number) => {
@@ -91,7 +105,7 @@ const useDueCards = (app: App | undefined): string[] => {
 		};
 	}, [app]);
 
-	return dates;
+	return cards;
 };
 
 export default useDueCards;
