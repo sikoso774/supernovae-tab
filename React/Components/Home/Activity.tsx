@@ -105,11 +105,6 @@ const Activity = ({ onOpenDay }: { onOpenDay: (day: string) => void }) => {
 
 	return (
 		<div className={`galaxy-section home-activity tier-${tier}`} ref={rootRef}>
-			<div className="galaxy-section-label">
-				<Icon name="flame" />
-				<span>Rythme d'écriture</span>
-			</div>
-
 			<div className="activity-hero">
 				<div className="activity-flame">
 					<Icon name={tier === "nova" ? "sparkles" : "flame"} />
@@ -153,87 +148,89 @@ const Activity = ({ onOpenDay }: { onOpenDay: (day: string) => void }) => {
 				</div>
 			</div>
 
-			{years.length > 1 && (
-				<div className="activity-tabs">
-					{[RECENT, ...years].map((v) => (
-						<a
-							key={v}
-							className={`activity-tab${v === view ? " is-active" : ""}`}
-							onClick={() => setView(v)}
+			<div className="activity-panel">
+				<div className="activity-calendar">
+					<div className="activity-weekdays">
+						{WEEKDAY_LABELS.map((label, i) => (
+							<span key={i}>{label}</span>
+						))}
+					</div>
+					<div className="activity-scroll" ref={scrollRef}>
+						<div
+							key={view}
+							className="activity-board"
+							style={{ ["--weeks" as string]: weeks.length }}
+							onMouseOver={(e) => {
+								const cell = dayOf(e.target);
+								if (cell) showTip(cell);
+							}}
+							onMouseLeave={() => setTip(null)}
+							onClick={(e) => {
+								const cell = dayOf(e.target);
+								if (cell && !cell.classList.contains("is-muted")) {
+									onOpenDay(cell.dataset.day as string);
+								}
+							}}
 						>
-							{v === RECENT ? "12 mois" : v}
-						</a>
-					))}
-				</div>
-			)}
-
-			<div className="activity-calendar">
-				<div className="activity-weekdays">
-					{WEEKDAY_LABELS.map((label, i) => (
-						<span key={i}>{label}</span>
-					))}
-				</div>
-				<div className="activity-scroll" ref={scrollRef}>
-					<div
-						key={view}
-						className="activity-board"
-						style={{ ["--weeks" as string]: weeks.length }}
-						onMouseOver={(e) => {
-							const cell = dayOf(e.target);
-							if (cell) showTip(cell);
-						}}
-						onMouseLeave={() => setTip(null)}
-						onClick={(e) => {
-							const cell = dayOf(e.target);
-							if (cell && !cell.classList.contains("is-muted")) {
-								onOpenDay(cell.dataset.day as string);
-							}
-						}}
-					>
-						<div className="activity-months">
-							{weeks.map(
-								(week, wi) =>
-									week.monthLabel && (
-										<span
-											key={wi}
-											style={{ gridColumn: wi + 1 }}
-										>
-											{week.monthLabel}
-										</span>
-									)
-							)}
-						</div>
-						<div className="activity-grid">
-							{weeks.map((week, wi) =>
-								week.cells.map((cell) => (
-									<div
-										key={cell.day}
-										data-day={cell.day}
-										data-count={cell.count}
-										className={`activity-cell level-${cell.level}${
-											cell.muted ? " is-muted" : ""
-										}${cell.day === today ? " is-today" : ""}`}
-										style={
-											cell.level > 0
-												? {
-														animationDelay: `${wi * 14}ms`,
-													}
-												: undefined
-										}
-									/>
-								))
-							)}
+							<div className="activity-months">
+								{weeks.map(
+									(week, wi) =>
+										week.monthLabel && (
+											<span
+												key={wi}
+												style={{ gridColumn: wi + 1 }}
+											>
+												{week.monthLabel}
+											</span>
+										)
+								)}
+							</div>
+							<div className="activity-grid">
+								{weeks.map((week, wi) =>
+									week.cells.map((cell) => (
+										<div
+											key={cell.day}
+											data-day={cell.day}
+											data-count={cell.count}
+											className={`activity-cell level-${cell.level}${
+												cell.muted ? " is-muted" : ""
+											}${cell.day === today ? " is-today" : ""}`}
+											style={
+												cell.level > 0
+													? {
+															animationDelay: `${wi * 14}ms`,
+														}
+													: undefined
+											}
+										/>
+									))
+								)}
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
-			<div className="activity-legend">
-				<span>Moins</span>
-				{[0, 1, 2, 3, 4, 5].map((level) => (
-					<span key={level} className={`activity-cell level-${level}`} />
-				))}
-				<span>Plus</span>
+				<div className="activity-footer">
+					<div className="activity-tabs">
+						{years.length > 1 &&
+							[RECENT, ...years].map((v) => (
+								<a
+									key={v}
+									className={`activity-tab${v === view ? " is-active" : ""}`}
+									onClick={() => setView(v)}
+								>
+									{v === RECENT ? "12 mois" : v}
+								</a>
+							))}
+					</div>
+					<div className="activity-legend">
+						<span>Moins</span>
+						{[0, 1, 2, 3, 4, 5].map((level) => (
+							<span key={level} className={`activity-cell level-${level}`} />
+						))}
+						<span>Plus</span>
+					</div>
+				</div>
 			</div>
 
 			{tip && (
