@@ -42,6 +42,8 @@ export interface TabGalaxyPluginSettings {
 	quoteSource: QUOTE_SOURCE;
 	customQuotes: CustomQuote[];
 	homeNavLinks: NavLink[];
+	interceptHome: boolean;
+	showActivity: boolean;
 }
 
 export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
@@ -65,11 +67,18 @@ export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
 	customQuotes: [],
 	homeNavLinks: [
 		{ label: "📘 Journal", path: "Dashboard" },
-		{ label: "🚀 Projets", path: "LienVersProjets" },
+		{ label: "🃏 Révision", path: "Flashcards Dashboard", badge: "due-cards" },
 		{ label: "🧠 Hub", path: "🧠Hub" },
 		{ label: "📖 Reading", path: "LIVRES.base" },
 		{ label: "☀️ Aujourd'hui", path: "{{today}}" },
+		{ label: "📐 UML", path: "UML", group: "Cursus MIAGE" },
+		{ label: "🗄️ BDD", path: "BDD", group: "Cursus MIAGE" },
+		{ label: "🎲 Maths", path: "MATHS", group: "Cursus MIAGE" },
+		{ label: "🌐 Web", path: "Web Dev", group: "Cursus MIAGE" },
+		{ label: "🐍 Python", path: "PYTHON", group: "Cursus MIAGE" },
 	],
+	interceptHome: true,
+	showActivity: true,
 };
 
 export class TabGalaxyPluginSettingTab extends PluginSettingTab {
@@ -363,9 +372,35 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 		new Setting(containerEl).setHeading().setName(`Home dashboard settings`);
 
 		new Setting(containerEl)
+			.setName("Take over Home.md")
+			.setDesc(
+				`When on, opening Home.md shows the galaxy dashboard instead. Turn it off to open the note itself (Dataview blocks, charts); the "Open home dashboard" command and the ribbon icon still open the dashboard.`
+			)
+			.addToggle((component) => {
+				component.setValue(this.plugin.settings.interceptHome);
+				component.onChange((value) => {
+					this.plugin.settings.interceptHome = value;
+					this.plugin.updateSettings();
+				});
+			});
+
+		new Setting(containerEl)
+			.setName("Show writing activity")
+			.setDesc(
+				`Day streak and calendar of the notes created per day (from each note's Date, created or création property).`
+			)
+			.addToggle((component) => {
+				component.setValue(this.plugin.settings.showActivity);
+				component.onChange((value) => {
+					this.plugin.settings.showActivity = value;
+					this.plugin.updateSettings();
+				});
+			});
+
+		new Setting(containerEl)
 			.setName("Navigation links")
 			.setDesc(
-				`${this.plugin.settings.homeNavLinks.length} link(s). Use {{today}} as path to open today's journal note.`
+				`${this.plugin.settings.homeNavLinks.length} link(s). Use {{today}} as path to open today's journal note. Links sharing a group are shown on their own row.`
 			)
 			.addButton((component) => {
 				component.setButtonText("Edit");

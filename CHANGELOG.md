@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-10-01
+
+### Added
+- **Writing streak and calendar** on the Home dashboard: a large "days in a row" counter
+  (the flame changes at 7, 30 and 100 days), longest streak, notes created this year, and a
+  one-square-per-day calendar (last 12 months, or any year). Hover a day for its count, click it
+  to open that day's journal note. One note = one contribution on the day of its `Date`,
+  `created` or `création` property; templates and `Home` are ignored. Plain CSS grid, no extra
+  dependency. Can be hidden with **Show writing activity**.
+- **Navigation link groups**: links sharing a *Group* are shown on their own labelled row
+  (e.g. a "Cursus MIAGE" row under the main buttons).
+- **Due flashcards badge**: tick *Due* on a navigation link to show how many Spaced Repetition
+  cards are due today or new, like the Spaced Repetition status bar (read from the `<!--SR:…-->` markers
+  and the card syntax of notes tagged `#flashcards`; the badge is
+  hidden when nothing is due).
+- **Take over Home.md** setting (on by default). Turn it off to open the real `Home.md` note
+  (Dataview blocks, charts); the "Open home dashboard" command and the ribbon icon still open
+  the dashboard.
+
+### Changed
+- **Active projects** now matches `Type`/`type` and `Status`/`status` regardless of case,
+  accepts `Project` or `Projet`, and `active`, `actif` or `En cours` (emoji ignored, so
+  `🟠 En cours` works).
+- **Recent files** no longer lists `Home`, `Theme Studio`, dashboards or anything under
+  `06 - Templates/`.
+- Default navigation links updated (the dead `Projets` link is replaced by `Révision`).
+- The Home dashboard scrolls when the window is too short for all sections.
+
 ## [1.2.0] - 2026-09-19
 
 ### ⚠️ Mobile: unstable

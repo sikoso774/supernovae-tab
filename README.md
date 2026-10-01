@@ -33,6 +33,9 @@ Create a note named `Home.md` in your vault. Whenever you open it, Supernovae Ta
 - **Navigation buttons** — configurable links to your key notes and folders
 - **Recent files** — your 5 most recently edited notes
 - **Active projects** — automatically lists notes with `Type: Project` and `status: active` in their frontmatter
+- **Writing streak and calendar** — a big "days in a row" counter and a one-square-per-day calendar of the notes you created (hover for details, click to open the day's journal note)
+- **Link groups** — navigation links sharing a group get their own labelled row
+- **Flashcards badge** — optional counter of Spaced Repetition cards to review (due or new) on a navigation button
 - **Tab protection** — clicking any file from the Home Dashboard opens it in a new tab, preserving the Home view
 
 > **Tip:** Use `{{today}}` as a navigation link path to automatically open today's daily note (format `YYYY-MM-DD`).
@@ -77,7 +80,7 @@ All settings are available under **Settings → Supernovae Tab**.
 | **Greeting** | Your name (used via `{{name}}`); show/hide greeting; custom greeting text |
 | **Recent files** | Show/hide the recent files section |
 | **Bookmarks** | Show/hide bookmarks; display all bookmarks or a specific group |
-| **Home Dashboard** | Edit the navigation links list |
+| **Home Dashboard** | Take over `Home.md` (on/off); show/hide the writing activity; edit the navigation links (label, path, group, due-cards badge) |
 | **Quotes** | Show/hide quotes; choose between built-in quotes, your own, or both |
 
 ### Greeting placeholders
@@ -108,6 +111,24 @@ status: active
 ```
 
 It will appear in the **Active projects** section of your Home Dashboard.
+
+Matching is forgiving: `Type`/`Status` in any case, `Project` or `Projet`, and `active`, `actif` or `En cours` (emoji ignored). Notes that only have a status, with no project type, are never listed.
+
+---
+
+## Home Dashboard — Writing activity
+
+The dashboard shows how regularly you write. Each note counts once, on the day given by its `Date`, `created` or `création` property (`YYYY-MM-DD`). Notes in `06 - Templates/` and `Home` are ignored.
+
+- **Streak** — consecutive days with at least one note. It stays alive until the end of today: if you have not written yet this morning, yesterday's streak is still shown.
+- **Calendar** — the last 12 months, or one calendar year at a time. Hover a square for the count, click it to open the note named after that day (`YYYY-MM-DD`).
+- Turn it off with **Settings → Supernovae Tab → Show writing activity**.
+
+---
+
+## Home Dashboard — Flashcards badge
+
+Tick **Due** on a navigation link (Settings → Navigation links → Edit) to show the number of flashcards to review on that button, the same figure as the [Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) status bar: cards due today plus new, never-reviewed cards, in notes tagged `#flashcards` or `#flashcards/…`. Due cards are read from the `<!--SR:!YYYY-MM-DD,…-->` markers the plugin writes next to each card; new cards are the cards of a note that have no marker yet, counted with the plugin's default syntax (`::`, `:::`, `?`, `??`, `==cloze==`), so it is an estimate if you changed the separators. The badge disappears when there is nothing to review.
 
 ---
 
