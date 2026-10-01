@@ -31,7 +31,7 @@ class NavLinksModal extends Modal {
 
 		contentEl.createEl("h2", { text: "Navigation links" });
 		contentEl.createEl("p", {
-			text: 'Use {{today}} as path to dynamically link to today\'s journal note.',
+			text: 'Use {{today}} as path to dynamically link to today\'s journal note. Links with the same group share a row; leave the group empty for the main row. "Due" shows the number of flashcards to review today.',
 			cls: "setting-item-description",
 		});
 
@@ -41,6 +41,8 @@ class NavLinksModal extends Modal {
 		headerRow.createEl("th");
 		headerRow.createEl("th", { text: "Label" });
 		headerRow.createEl("th", { text: "Path (note name)" });
+		headerRow.createEl("th", { text: "Group" });
+		headerRow.createEl("th", { text: "Due" });
 		const tbody = table.createEl("tbody");
 
 		this._links.forEach((link, index) => {
@@ -83,6 +85,29 @@ class NavLinksModal extends Modal {
 			});
 			pathInput.addEventListener("input", () => {
 				this._links[index].path = pathInput.value;
+			});
+
+			const groupCell = row.createEl("td");
+			const groupInput = groupCell.createEl("input", {
+				type: "text",
+				value: link.group ?? "",
+				cls: "galaxy-navlinks-group",
+				placeholder: "Main row",
+			});
+			groupInput.addEventListener("input", () => {
+				this._links[index].group = groupInput.value;
+			});
+
+			const badgeCell = row.createEl("td");
+			const badgeInput = badgeCell.createEl("input", {
+				type: "checkbox",
+				cls: "galaxy-navlinks-badge",
+			});
+			badgeInput.checked = link.badge === "due-cards";
+			badgeInput.addEventListener("change", () => {
+				this._links[index].badge = badgeInput.checked
+					? "due-cards"
+					: undefined;
 			});
 		});
 

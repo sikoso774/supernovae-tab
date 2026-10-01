@@ -1,17 +1,40 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Notice, TFile, moment } from "obsidian";
 import { useObsidian } from "../../Context/ObsidianAppContext";
 import getTimeOfDayGreeting from "React/Utils/getTimeOfDayGreeting";
 import Observable from "src/Utils/Observable";
 import { TabGalaxyPluginSettings } from "src/Settings/Settings";
+import { NavLink } from "src/Types/Interfaces";
 import TabGalaxyPlugin from "main";
 import StarField from "../StarField/StarField";
 import Icon from "../Icon/Icon";
 import Clock from "../Clock/Clock";
+import Activity from "./Activity";
+import DueBadge from "./DueBadge";
 import useVaultFiles, {
 	getActiveProjects,
 	getRecentMarkdownFiles,
 } from "React/Utils/useVaultFiles";
+
+interface NavRow {
+	group: string;
+	links: NavLink[];
+}
+
+// One row per group, in order of first appearance; links without a group share the main row
+const groupLinks = (links: NavLink[]): NavRow[] => {
+	const rows: NavRow[] = [];
+	for (const link of links) {
+		const group = (link.group ?? "").trim();
+		let row = rows.find((r) => r.group === group);
+		if (!row) {
+			row = { group, links: [] };
+			rows.push(row);
+		}
+		row.links.push(link);
+	}
+	return rows;
+};
 
 const Home = ({
 	settingsObservable,
@@ -30,6 +53,10 @@ const Home = ({
 		getRecentMarkdownFiles(app)
 	);
 	const activeProjects = useVaultFiles(obsidian, getActiveProjects);
+	const navRows = useMemo(
+		() => groupLinks(settings.homeNavLinks),
+		[settings.homeNavLinks]
+	);
 
 	const resolvePath = (path: string) =>
 		path === "{{today}}" ? moment().format("YYYY-MM-DD") : path;
@@ -47,6 +74,16 @@ const Home = ({
 			openTFile(file);
 		} else {
 			new Notice(`Note introuvable : ${resolved}`);
+		}
+	};
+
+	// A calendar day opens that day's journal note (named YYYY-MM-DD), if any
+	const openDay = (day: string) => {
+		const file = obsidian?.metadataCache.getFirstLinkpathDest(day, "");
+		if (file instanceof TFile) {
+			openTFile(file);
+		} else {
+			new Notice(`Pas de note de journal pour le ${day}`);
 		}
 	};
 
@@ -78,21 +115,33 @@ const Home = ({
 					</div>
 				</div>
 
-				{/* Boutons de navigation */}
+				{/* Boutons de navigation, une rangée par groupe */}
 				<div className="home-nav">
-					{settings.homeNavLinks.map(({ label, path }) => (
-						<a
-							key={`${label}-${path}`}
-							className={`home-nav-btn${path === "{{today}}" ? " home-nav-btn--today" : ""}`}
-							onClick={() => openFile(path)}
-						>
-							{label}
-						</a>
+					{navRows.map(({ group, links }) => (
+						<div key={group || "main"} className="home-nav-row">
+							{group && (
+								<span className="home-nav-group-label">
+									{group}
+								</span>
+							)}
+							{links.map(({ label, path, badge }) => (
+								<a
+									key={`${label}-${path}`}
+									className={`home-nav-btn${path === "{{today}}" ? " home-nav-btn--today" : ""}`}
+									onClick={() => openFile(path)}
+								>
+									{label}
+									{badge === "due-cards" && <DueBadge />}
+								</a>
+							))}
+						</div>
 					))}
 				</div>
 
-				{/* Récents + Projets actifs */}
+				{/* Activité + Récents + Projets actifs */}
 				<div className="galaxy-bottom home-bottom">
+					{settings.showActivity && <Activity onOpenDay={openDay} />}
+
 					<div className="galaxy-section">
 						<div className="galaxy-section-label">
 							<Icon name="clock" />

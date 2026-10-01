@@ -92,6 +92,7 @@ export default class TabGalaxyPlugin extends Plugin {
 
 		// Home.md ouvert dans un onglet normal → convertir en vue galaxie
 		if (file.basename === "Home") {
+			if (!this.settings.interceptHome) return;
 			if (this.bypassHomeIntercept) {
 				this.bypassHomeIntercept = false;
 				return;
