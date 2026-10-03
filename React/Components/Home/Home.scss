@@ -19,11 +19,15 @@
 
 	// Sized from the window height so the whole dashboard fits without scrolling
 	.home-time {
-		font-size: clamp(3rem, 9cqh, 6rem) !important;
+		font-size: clamp(4rem, 14cqh, 9rem) !important;
 
 		@container (max-width: 520px) {
 			font-size: 20cqw !important;
 		}
+	}
+
+	.home-center .galaxy-date {
+		font-size: clamp(1rem, 2.2cqh, 1.5rem) !important;
 	}
 
 	.home-center .galaxy-greeting {
@@ -129,42 +133,6 @@
 	.home-bottom {
 		gap: 0;
 		flex: 0 0 auto;
-	}
-
-	/* ── Projets actifs ──────────────────────────── */
-	.home-projects {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-		justify-content: center;
-	}
-
-	.home-project-item {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 8px 16px;
-		border-radius: 10px;
-		border: 1px solid rgba(100, 150, 255, 0.1);
-		background: rgba(30, 50, 120, 0.07);
-		color: rgba(190, 210, 255, 0.75);
-		text-decoration: none;
-		font-size: 0.88rem;
-		cursor: pointer;
-		transition: all 0.25s ease;
-
-		.galaxy-icon svg {
-			width: 14px;
-			height: 14px;
-			opacity: 0.6;
-		}
-
-		&:hover {
-			background: rgba(70, 110, 255, 0.14);
-			border-color: rgba(100, 150, 255, 0.28);
-			color: #ffffff;
-			box-shadow: 0 0 14px rgba(70, 110, 255, 0.18);
-		}
 	}
 
 	/* ── Rythme d'écriture : série + calendrier ──── */

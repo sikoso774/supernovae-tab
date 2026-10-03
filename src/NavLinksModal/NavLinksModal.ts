@@ -31,7 +31,7 @@ class NavLinksModal extends Modal {
 
 		contentEl.createEl("h2", { text: "Navigation links" });
 		contentEl.createEl("p", {
-			text: 'Use {{today}} as path to dynamically link to today\'s journal note. Links with the same group share a row; leave the group empty for the main row. "Due" shows the number of flashcards to review today.',
+			text: 'Use {{today}} as path to dynamically link to today\'s journal note. Use command:<id> as path to run an Obsidian command (e.g. command:obsidian-spaced-repetition:srs-review-flashcards). Links with the same group share a row; leave the group empty for the main row. "Due" shows the number of flashcards to review today.',
 			cls: "setting-item-description",
 		});
 
@@ -81,7 +81,7 @@ class NavLinksModal extends Modal {
 				type: "text",
 				value: link.path,
 				cls: "galaxy-navlinks-path",
-				placeholder: "Nom de la note ou {{today}}",
+				placeholder: "Nom de la note, {{today}} ou command:<id>",
 			});
 			pathInput.addEventListener("input", () => {
 				this._links[index].path = pathInput.value;

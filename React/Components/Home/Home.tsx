@@ -12,7 +12,6 @@ import Clock from "../Clock/Clock";
 import Activity from "./Activity";
 import DueBadge from "./DueBadge";
 import useVaultFiles, {
-	getActiveProjects,
 	getRecentMarkdownFiles,
 } from "React/Utils/useVaultFiles";
 
@@ -22,6 +21,8 @@ interface NavRow {
 }
 
 // One row per group, in order of first appearance; links without a group share the main row
+const COMMAND_PREFIX = "command:";
+
 const groupLinks = (links: NavLink[]): NavRow[] => {
 	const rows: NavRow[] = [];
 	for (const link of links) {
@@ -52,7 +53,6 @@ const Home = ({
 	const latestFiles = useVaultFiles(obsidian, (app) =>
 		getRecentMarkdownFiles(app)
 	);
-	const activeProjects = useVaultFiles(obsidian, getActiveProjects);
 	const navRows = useMemo(
 		() => groupLinks(settings.homeNavLinks),
 		[settings.homeNavLinks]
@@ -63,6 +63,15 @@ const Home = ({
 
 	const openTFile = (file: TFile) => {
 		void obsidian?.workspace.getMostRecentLeaf()?.openFile(file);
+	};
+
+	// A link path "command:<id>" runs that Obsidian command instead of opening a note
+	const openLink = (path: string) => {
+		if (path.indexOf(COMMAND_PREFIX) === 0) {
+			plugin.openSwitcherCommand(path.slice(COMMAND_PREFIX.length));
+		} else {
+			openFile(path);
+		}
 	};
 
 	const openFile = (path: string) => {
@@ -104,7 +113,11 @@ const Home = ({
 			<div className="galaxy-wrapper home-wrapper">
 				{/* Heure + greeting */}
 				<div className="galaxy-center home-center">
-					<Clock timeFormat={settings.timeFormat} className="home-time" />
+					<Clock
+						timeFormat={settings.timeFormat}
+						dateLanguage={settings.dateLanguage}
+						className="home-time"
+					/>
 					<div className="galaxy-greeting">
 						{settings.greetingText
 							.replace(/{{greeting}}/gi, getTimeOfDayGreeting())
@@ -128,7 +141,7 @@ const Home = ({
 								<a
 									key={`${label}-${path}`}
 									className={`home-nav-btn${path === "{{today}}" ? " home-nav-btn--today" : ""}`}
-									onClick={() => openFile(path)}
+									onClick={() => openLink(path)}
 								>
 									{label}
 									{badge === "due-cards" && <DueBadge />}
@@ -138,7 +151,7 @@ const Home = ({
 					))}
 				</div>
 
-				{/* Activité + Récents + Projets actifs */}
+				{/* Activité + Récents */}
 				<div className="galaxy-bottom home-bottom">
 					{settings.showActivity && <Activity onOpenDay={openDay} />}
 
@@ -162,27 +175,6 @@ const Home = ({
 							))}
 						</div>
 					</div>
-
-					{activeProjects.length > 0 && (
-						<div className="galaxy-section">
-							<div className="galaxy-section-label">
-								<Icon name="rocket" />
-								<span>Projets actifs</span>
-							</div>
-							<div className="home-projects">
-								{activeProjects.map((file) => (
-									<a
-										key={file.path}
-										className="home-project-item"
-										onClick={() => openTFile(file)}
-									>
-										<Icon name="file-text" />
-										<span>{file.basename}</span>
-									</a>
-								))}
-							</div>
-						</div>
-					)}
 				</div>
 			</div>
 		</div>

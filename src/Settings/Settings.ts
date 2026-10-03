@@ -6,6 +6,7 @@ import CustomQuotesModel from "src/CustomQuotesModel/CustomQuotesModel";
 import NavLinksModal from "src/NavLinksModal/NavLinksModal";
 import {
 	BOOKMARK_SOURCE,
+	DATE_LANGUAGE,
 	QUOTE_SOURCE,
 	TIME_FORMAT,
 } from "src/Types/Enums";
@@ -30,6 +31,7 @@ export interface TabGalaxyPluginSettings {
 	topLeftSearchProvider: SearchProvider;
 	showTime: boolean;
 	timeFormat: TIME_FORMAT;
+	dateLanguage: DATE_LANGUAGE;
 	showGreeting: boolean;
 	greetingText: string;
 	showInlineSearch: boolean;
@@ -54,6 +56,7 @@ export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
 	topLeftSearchProvider: DEFAULT_SEARCH_PROVIDER,
 	showTime: true,
 	timeFormat: TIME_FORMAT.TWELVE_HOUR,
+	dateLanguage: DATE_LANGUAGE.FRENCH,
 	showGreeting: true,
 	greetingText: "{{greeting}}, {{name}}.",
 	showInlineSearch: true,
@@ -67,7 +70,11 @@ export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
 	customQuotes: [],
 	homeNavLinks: [
 		{ label: "📘 Journal", path: "Dashboard" },
-		{ label: "🃏 Révision", path: "Flashcards Dashboard", badge: "due-cards" },
+		{
+			label: "🃏 Révision",
+			path: "command:obsidian-spaced-repetition:srs-review-flashcards",
+			badge: "due-cards",
+		},
 		{ label: "🧠 Hub", path: "🧠Hub" },
 		{ label: "📖 Reading", path: "LIVRES.base" },
 		{ label: "☀️ Aujourd'hui", path: "{{today}}" },
@@ -244,6 +251,23 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				});
 			});
 
+		new Setting(containerEl)
+			.setName("Date language")
+			.setDesc(
+				`Language of the date shown under the clock (home dashboard and new tab).`
+			)
+			.addDropdown((component) => {
+				component.addOption(DATE_LANGUAGE.FRENCH, "Français");
+				component.addOption(DATE_LANGUAGE.ENGLISH, "English");
+
+				component.setValue(this.plugin.settings.dateLanguage);
+
+				component.onChange((value: DATE_LANGUAGE) => {
+					this.plugin.settings.dateLanguage = value;
+					this.plugin.updateSettings();
+				});
+			});
+
 		/****************************************
 		 * Greeting settings
 		 ***************************************/
@@ -400,7 +424,7 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Navigation links")
 			.setDesc(
-				`${this.plugin.settings.homeNavLinks.length} link(s). Use {{today}} as path to open today's journal note. Links sharing a group are shown on their own row.`
+				`${this.plugin.settings.homeNavLinks.length} link(s). Use {{today}} as path to open today's journal note, or command:<id> to run an Obsidian command. Links sharing a group are shown on their own row.`
 			)
 			.addButton((component) => {
 				component.setButtonText("Edit");
