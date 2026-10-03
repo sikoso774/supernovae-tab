@@ -4,6 +4,7 @@ import { HomeView, GALAXY_HOME_VIEW } from "./Views/HomeView";
 import Observable from "src/Utils/Observable";
 import "src/Types/ObsidianInternal";
 import VaultSearch from "src/Search/VaultSearch";
+import { pinLeaf } from "src/Utils/pinLeaf";
 import {
 	TabGalaxyPluginSettingTab,
 	TabGalaxyPluginSettings,
@@ -68,7 +69,11 @@ export default class TabGalaxyPlugin extends Plugin {
 
 		// Indexed once the workspace is ready, so the startup is not slowed down
 		this.search = new VaultSearch(this);
-		this.app.workspace.onLayoutReady(() => this.search?.start());
+		this.app.workspace.onLayoutReady(() => {
+			this.search?.start();
+			// Dashboards restored from the last session are pinned as well
+			this.pinHomeLeaves();
+		});
 
 		this.registerEvent(
 			this.app.workspace.on("layout-change", () => this.onLayoutChange())
@@ -92,6 +97,18 @@ export default class TabGalaxyPlugin extends Plugin {
 
 	onunload() {
 		this.search?.stop();
+	}
+
+	/**
+	 * Pins every home dashboard tab (unless turned off in the settings): a note
+	 * chosen from outside it, or from the file explorer, then opens in a new tab
+	 * instead of replacing the dashboard.
+	 */
+	pinHomeLeaves(): void {
+		if (!this.settings.pinHomeTab) return;
+		this.app.workspace
+			.getLeavesOfType(GALAXY_HOME_VIEW)
+			.forEach((leaf) => pinLeaf(leaf));
 	}
 
 	private async onFileOpen(file: TFile | null): Promise<void> {

@@ -47,6 +47,7 @@ export interface TabGalaxyPluginSettings {
 	customQuotes: CustomQuote[];
 	homeNavLinks: NavLink[];
 	interceptHome: boolean;
+	pinHomeTab: boolean;
 	showActivity: boolean;
 	showDataNerds: boolean;
 	domainsFolder: string;
@@ -91,6 +92,7 @@ export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
 		{ label: "🐍 Python", path: "PYTHON", group: "Cursus MIAGE" },
 	],
 	interceptHome: true,
+	pinHomeTab: true,
 	showActivity: true,
 	showDataNerds: true,
 	domainsFolder: "03 - CONTENTS",
@@ -445,6 +447,20 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.onChange((value) => {
 					this.plugin.settings.interceptHome = value;
 					this.plugin.updateSettings();
+				});
+			});
+
+		new Setting(containerEl)
+			.setName("Pin the Home tab")
+			.setDesc(
+				`Keeps the home dashboard pinned, so a note chosen from the file explorer or a link opens in a new tab instead of replacing it. Notes opened from the dashboard always get a tab of their own.`
+			)
+			.addToggle((component) => {
+				component.setValue(this.plugin.settings.pinHomeTab);
+				component.onChange((value) => {
+					this.plugin.settings.pinHomeTab = value;
+					this.plugin.updateSettings();
+					this.plugin.pinHomeLeaves();
 				});
 			});
 

@@ -5,6 +5,7 @@ import Observable from "src/Utils/Observable";
 import TabGalaxyPlugin from "main";
 import { TabGalaxyPluginSettings } from "src/Settings/Settings";
 import HomeApp from "../React/Components/Home/Home";
+import { pinLeaf } from "src/Utils/pinLeaf";
 
 export const GALAXY_HOME_VIEW = "galaxy-home-view";
 
@@ -38,6 +39,13 @@ export class HomeView extends ItemView {
 
 	async onOpen() {
 		this.plugin.homeLeaves.add(this.leaf);
+
+		// Pinned as soon as it opens, so notes chosen elsewhere open in a new tab.
+		// Once more after the tab has finished loading its state.
+		if (this.plugin.settings.pinHomeTab) {
+			pinLeaf(this.leaf);
+			window.setTimeout(() => pinLeaf(this.leaf), 0);
+		}
 
 		this.addAction("pencil", "Modifier Home.md", () => {
 			const file =
