@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-10-03
+
+### Added
+- **Date language** setting (Settings → Time settings): the date under the clock can be shown in
+  French (default) or English, on the home dashboard and on the new tab.
+- **Command links**: a navigation link whose path is `command:<id>` runs that Obsidian command
+  instead of opening a note. The default *Révision* link now runs
+  `command:obsidian-spaced-repetition:srs-review-flashcards`, which opens the Spaced Repetition deck
+  dialog directly (the due-cards badge stays on the button). A clear notice is shown when the plugin
+  that owns the command is not enabled.
+
+### Changed
+- The clock on the home dashboard is much larger (about 140 px on a 1080p window); it still scales
+  with the window height so the whole dashboard keeps fitting on one screen.
+
+### Removed
+- The **Active projects** section of the home dashboard, to leave room for the larger clock. Notes
+  with `Type: Project` are no longer listed.
+
 ## [1.3.0] - 2026-10-01
 
 ### Added

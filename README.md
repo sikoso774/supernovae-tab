@@ -30,9 +30,8 @@ Every new empty tab is replaced by the galaxy view:
 Create a note named `Home.md` in your vault. Whenever you open it, Supernovae Tab intercepts the navigation and displays a dedicated Home Dashboard instead:
 
 - Same galaxy background as the new tab
-- **Navigation buttons** — configurable links to your key notes and folders
+- **Navigation buttons** — configurable links to your key notes and folders, or to any Obsidian command (path `command:<id>`)
 - **Recent files** — your 5 most recently edited notes
-- **Active projects** — automatically lists notes with `Type: Project` and `status: active` in their frontmatter
 - **Writing streak and calendar** — a big "days in a row" counter and a one-square-per-day calendar of the notes you created (hover for details, click to open the day's journal note)
 - **Link groups** — navigation links sharing a group get their own labelled row
 - **Flashcards badge** — optional counter of Spaced Repetition cards to review (due or new) on a navigation button
@@ -76,11 +75,11 @@ All settings are available under **Settings → Supernovae Tab**.
 | --- | --- |
 | **Mobile** | Disable the plugin on phones and tablets (on by default) |
 | **Search** | Show/hide top-left search button and inline search bar; choose the search provider plugin |
-| **Time** | Show/hide the clock; 12-hour or 24-hour format |
+| **Time** | Show/hide the clock; 12-hour or 24-hour format; date language (French or English) |
 | **Greeting** | Your name (used via `{{name}}`); show/hide greeting; custom greeting text |
 | **Recent files** | Show/hide the recent files section |
 | **Bookmarks** | Show/hide bookmarks; display all bookmarks or a specific group |
-| **Home Dashboard** | Take over `Home.md` (on/off); show/hide the writing activity; edit the navigation links (label, path, group, due-cards badge) |
+| **Home Dashboard** | Take over `Home.md` (on/off); show/hide the writing activity; edit the navigation links (label, path or `command:<id>`, group, due-cards badge) |
 | **Quotes** | Show/hide quotes; choose between built-in quotes, your own, or both |
 
 ### Greeting placeholders
@@ -99,23 +98,6 @@ All settings are available under **Settings → Supernovae Tab**.
 
 ---
 
-## Home Dashboard — Active Projects
-
-Supernovae Tab automatically surfaces your active projects without any manual configuration. Just add this frontmatter to a note:
-
-```yaml
----
-Type: Project
-status: active
----
-```
-
-It will appear in the **Active projects** section of your Home Dashboard.
-
-Matching is forgiving: `Type`/`Status` in any case, `Project` or `Projet`, and `active`, `actif` or `En cours` (emoji ignored). Notes that only have a status, with no project type, are never listed.
-
----
-
 ## Home Dashboard — Writing activity
 
 The dashboard shows how regularly you write. Each note counts once, on the day given by its `Date`, `created` or `création` property (`YYYY-MM-DD`). Notes in `06 - Templates/` and `Home` are ignored.
@@ -123,6 +105,12 @@ The dashboard shows how regularly you write. Each note counts once, on the day g
 - **Streak** — consecutive days with at least one note. It stays alive until the end of today: if you have not written yet this morning, yesterday's streak is still shown.
 - **Calendar** — the last 12 months, or one calendar year at a time. Hover a square for the count, click it to open the note named after that day (`YYYY-MM-DD`).
 - Turn it off with **Settings → Supernovae Tab → Show writing activity**.
+
+---
+
+## Home Dashboard — Command links
+
+A navigation link whose **path** starts with `command:` runs an Obsidian command instead of opening a note. A command id has the form `plugin-id:command-id` (list them in the developer console with `Object.keys(app.commands.commands)`), for example `command:obsidian-spaced-repetition:srs-review-flashcards` to open the Spaced Repetition deck dialog. If the plugin that owns the command is disabled, a notice says so.
 
 ---
 
