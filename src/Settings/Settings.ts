@@ -46,6 +46,8 @@ export interface TabGalaxyPluginSettings {
 	homeNavLinks: NavLink[];
 	interceptHome: boolean;
 	showActivity: boolean;
+	showDataNerds: boolean;
+	domainsFolder: string;
 }
 
 export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
@@ -86,6 +88,8 @@ export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
 	],
 	interceptHome: true,
 	showActivity: true,
+	showDataNerds: true,
+	domainsFolder: "03 - CONTENTS",
 };
 
 export class TabGalaxyPluginSettingTab extends PluginSettingTab {
@@ -417,6 +421,33 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.setValue(this.plugin.settings.showActivity);
 				component.onChange((value) => {
 					this.plugin.settings.showActivity = value;
+					this.plugin.updateSettings();
+				});
+			});
+
+		new Setting(containerEl)
+			.setName("Show data panel")
+			.setDesc(
+				`Charts of the notes created per month and of the notes per domain.`
+			)
+			.addToggle((component) => {
+				component.setValue(this.plugin.settings.showDataNerds);
+				component.onChange((value) => {
+					this.plugin.settings.showDataNerds = value;
+					this.plugin.updateSettings();
+				});
+			});
+
+		new Setting(containerEl)
+			.setName("Domains folder")
+			.setDesc(
+				`Folder whose sub-folders are the domains of the data panel (one slice of the donut per sub-folder).`
+			)
+			.addText((component) => {
+				component.setPlaceholder("03 - CONTENTS");
+				component.setValue(this.plugin.settings.domainsFolder);
+				component.onChange((value) => {
+					this.plugin.settings.domainsFolder = value.trim();
 					this.plugin.updateSettings();
 				});
 			});

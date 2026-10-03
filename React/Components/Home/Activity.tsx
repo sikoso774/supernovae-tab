@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Icon from "../Icon/Icon";
-import { useObsidian } from "../../Context/ObsidianAppContext";
 import useToday from "React/Utils/useToday";
-import useWritingActivity from "React/Utils/useWritingActivity";
 import {
+	DayCounts,
 	addDays,
 	buildCalendar,
 	computeStreaks,
@@ -12,6 +11,8 @@ import {
 } from "React/Utils/activity";
 
 const RECENT = "recent";
+// About six months: the compact calendar shows 26 weeks, years show the full 53
+const RECENT_DAYS = 175;
 
 const monthName = (monthIndex: number): string =>
 	new Date(2000, monthIndex, 1).toLocaleDateString("fr-FR", {
@@ -45,8 +46,13 @@ interface Tip {
  * Writing streak + a one-square-per-day calendar of the notes created.
  * Plain CSS grid (no canvas, no chart library): cheap enough to leave open.
  */
-const Activity = ({ onOpenDay }: { onOpenDay: (day: string) => void }) => {
-	const counts = useWritingActivity(useObsidian());
+const Activity = ({
+	counts,
+	onOpenDay,
+}: {
+	counts: DayCounts;
+	onOpenDay: (day: string) => void;
+}) => {
 	const today = useToday();
 	const [view, setView] = useState(RECENT);
 	const [tip, setTip] = useState<Tip | null>(null);
@@ -65,7 +71,8 @@ const Activity = ({ onOpenDay }: { onOpenDay: (day: string) => void }) => {
 	}, [counts, currentYear]);
 
 	const weeks = useMemo(() => {
-		const from = view === RECENT ? addDays(today, -364) : `${view}-01-01`;
+		const from =
+			view === RECENT ? addDays(today, -(RECENT_DAYS - 1)) : `${view}-01-01`;
 		const to =
 			view === RECENT || view === currentYear ? today : `${view}-12-31`;
 		return buildCalendar(counts, from, to, monthName);
@@ -106,7 +113,7 @@ const Activity = ({ onOpenDay }: { onOpenDay: (day: string) => void }) => {
 				: "jours d'affilée";
 
 	return (
-		<div className={`galaxy-section home-activity tier-${tier}`} ref={rootRef}>
+		<div className={`home-card home-activity tier-${tier}`} ref={rootRef}>
 			<div className="activity-hero">
 				<div className="activity-flame">
 					<Icon name={tier === "nova" ? "sparkles" : "flame"} />
@@ -221,7 +228,7 @@ const Activity = ({ onOpenDay }: { onOpenDay: (day: string) => void }) => {
 									className={`activity-tab${v === view ? " is-active" : ""}`}
 									onClick={() => setView(v)}
 								>
-									{v === RECENT ? "12 mois" : v}
+									{v === RECENT ? "6 mois" : v}
 								</a>
 							))}
 					</div>

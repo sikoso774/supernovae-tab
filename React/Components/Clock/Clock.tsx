@@ -9,10 +9,12 @@ import { DATE_LANGUAGE, TIME_FORMAT } from "src/Types/Enums";
 const Clock = ({
 	timeFormat,
 	dateLanguage,
+	showDate = true,
 	className = "",
 }: {
 	timeFormat: TIME_FORMAT;
 	dateLanguage: DATE_LANGUAGE;
+	showDate?: boolean;
 	className?: string;
 }) => {
 	const [time, setTime] = useState(getTime(timeFormat));
@@ -31,7 +33,7 @@ const Clock = ({
 	return (
 		<>
 			<div className={`galaxy-time ${className}`.trim()}>{time}</div>
-			<div className="galaxy-date">{date}</div>
+			{showDate && <div className="galaxy-date">{date}</div>}
 		</>
 	);
 };
