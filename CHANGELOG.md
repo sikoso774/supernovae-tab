@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-10-03
+
+### Added
+- **Built-in full-text search on the new tab.** The search bar is now a real input: type and the results
+  appear in the tab itself, without the Quick Switcher window. Notes are searched by title, section
+  titles, tags, folder and body, ranked by relevance (a word in the title counts more than one in the
+  body), tolerant to accents (`modelisation` finds *modélisation*) and to typos (`mongdb` finds
+  *MongoDB*), and matching the beginning of words while you type. When no note contains every word, the
+  best partial matches are listed and labelled as such.
+- **Preview of the selected result**, rendered by Obsidian on the right of the list, from the section
+  that holds the first match, with the matching words highlighted. Links in the preview open their note.
+  It is hidden when the tab is narrow (under 760 px), where the list takes the full width.
+- Keyboard: arrows and Page Up / Page Down to move in the list, Enter to open the note (Ctrl+Enter in a
+  new tab), Esc to clear the search. Typing anywhere in the tab starts a search.
+- Drawings (`.excalidraw.md`) are found through the texts they contain.
+- Settings **Built-in full-text search** and **Folders left out of the search** (default
+  `06 - Templates`).
+- The index is an inverted index kept in memory (about 15 MB for 600 notes). It is built in the
+  background once Obsidian is ready, without freezing the app, and follows every edit, rename and
+  deletion of a note.
+
+### Changed
+- While you search, the clock shrinks and the greeting, the recent notes and the quote step aside to
+  give the results the room. Turning the built-in search off brings back the previous behavior: the bar
+  opens the chosen search provider.
+
 ## [1.5.0] - 2026-10-03
 
 ### Changed

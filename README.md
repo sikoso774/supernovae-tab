@@ -18,7 +18,7 @@ Every new empty tab is replaced by the galaxy view:
 - **Live clock** — large Orbitron display, 12h or 24h format
 - **Date** — displayed below the clock
 - **Greeting** — personalized message with time-of-day and your name
-- **Search bar** — opens your preferred search plugin
+- **Full-text search** — type in the bar and the results show up in the tab itself, with a preview of the selected note and the matching words highlighted (see [Full-text search](#new-tab--full-text-search))
 - **Recent files** — your 5 most recently edited notes
 - **Bookmarks** — from all bookmarks or a specific group
 - **Quote** — a random quote from the built-in list or your own custom quotes
@@ -76,7 +76,7 @@ All settings are available under **Settings → Supernovae Tab**.
 | Section | Options |
 | --- | --- |
 | **Mobile** | Disable the plugin on phones and tablets (on by default) |
-| **Search** | Show/hide top-left search button and inline search bar; choose the search provider plugin |
+| **Search** | Show/hide top-left search button and inline search bar; built-in full-text search (on by default) and the folders it leaves out; choose the search provider plugin (top-left button, or the bar when the built-in search is off) |
 | **Time** | Show/hide the clock; 12-hour or 24-hour format; date language (French or English) |
 | **Greeting** | Your name (used via `{{name}}`); show/hide greeting; custom greeting text |
 | **Recent files** | Show/hide the recent files section |
@@ -97,6 +97,19 @@ All settings are available under **Settings → Supernovae Tab**.
 - [Omnisearch](https://github.com/scambier/obsidian-omnisearch)
 - [Another Quick Switcher](https://github.com/tadashi-aikawa/obsidian-another-quick-switcher)
 - [Quick Switcher++](https://github.com/darlal/obsidian-switcher-plus)
+
+---
+
+## New Tab — Full-text search
+
+The search bar of the new tab searches the content of your notes, right in the tab, with no window on top of it. Start typing (anywhere in the tab) and the clock shrinks to make room for the results.
+
+- **What is searched** — the title, the section titles, the tags (and `MOC`), the folder and the text of each note. A word in the title counts more than one in a section title or a tag, which counts more than one in the body. Drawings (`.excalidraw.md`) are searched through their texts; frontmatter, images, links' targets, SR markers and the TikZ / chart / Dataview blocks are left out.
+- **How it matches** — accents and case are ignored (`modelisation` finds *modélisation*), a typo is tolerated from four letters on (`mongdb` finds *MongoDB*), and the beginning of a word is enough while you type (`replic` finds *replica* and *réplication*). Every word you type must be in the note; if no note has them all, the best partial matches are shown and labelled. There are no search operators (quotes, `-word`, `tag:`) yet.
+- **Results** — a list with the title, the folder path and an excerpt with the matching words highlighted; the selected note is rendered on the right, from the section that holds the first match. Under 760 px of width the preview is hidden.
+- **Keyboard** — ↑ / ↓ and Page Up / Page Down to move, **Enter** to open the note, **Ctrl+Enter** to open it in a new tab, **Esc** to clear the search.
+- **Index** — kept in memory (about 15 MB for 600 notes), built in the background when Obsidian is ready (an "Indexation" counter shows while it runs) and updated after each edit, rename or deletion. Folders can be left out in the settings (default `06 - Templates`).
+- To get the previous behavior (the bar opens your search provider), turn off **Built-in full-text search**. The top-left button always opens the provider.
 
 ---
 
