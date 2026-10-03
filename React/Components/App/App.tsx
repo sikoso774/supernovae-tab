@@ -93,7 +93,10 @@ const App = ({
 				</div>
 				<div className="galaxy-center">
 					{settings.showTime && (
-						<Clock timeFormat={settings.timeFormat} />
+						<Clock
+							timeFormat={settings.timeFormat}
+							dateLanguage={settings.dateLanguage}
+						/>
 					)}
 					{settings.showGreeting && (
 						<div className="galaxy-greeting">
