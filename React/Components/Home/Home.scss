@@ -1,7 +1,7 @@
 .workspace-tabs .workspace-leaf-content.tab-galaxy-home {
 
-	// The dashboard scales itself to the window (see .home-fit and fitToHeight.ts).
-	// Clipped, because a scaled box still occupies its unscaled size; fitToHeight
+	// The dashboard scales itself to the window (see .home-fit and fitToWindow.ts).
+	// Clipped, because a scaled box still occupies its unscaled size; fitToWindow
 	// switches to scrolling only once the minimum scale is reached
 	.home-wrapper {
 		display: block !important;
@@ -16,13 +16,11 @@
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-		// scaled by --fit, so this box is taller than the wrapper by 1 / --fit and fills it once scaled
+		// scaled by --fit, so this box is bigger than the wrapper by 1 / --fit and fills it once scaled
+		width: calc(100% / var(--fit));
 		height: calc(100% / var(--fit));
 		transform: scale(var(--fit));
-		transform-origin: top center;
+		transform-origin: top left;
 	}
 
 	.home-pad {
@@ -38,9 +36,84 @@
 		}
 	}
 
-	/* Heure plus compacte que le new tab */
+	/* ── Grille à trois colonnes ─────────────────── */
+	.home-grid {
+		flex: 1 1 auto;
+		min-height: 0;
+		box-sizing: border-box;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1fr);
+		grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr);
+		grid-template-areas:
+			"tabs clock date"
+			"groups activity data"
+			"recent activity data";
+		gap: 16px 22px;
+		padding: 0 28px;
+	}
+
+	.home-tabs {
+		grid-area: tabs;
+	}
+
 	.home-center {
-		flex: 0 0 auto;
+		grid-area: clock;
+	}
+
+	.home-date {
+		grid-area: date;
+	}
+
+	.home-groups {
+		grid-area: groups;
+	}
+
+	.home-activity {
+		grid-area: activity;
+	}
+
+	.home-data {
+		grid-area: data;
+	}
+
+	.home-recent {
+		grid-area: recent;
+	}
+
+	/* ── Cartes « verre » ────────────────────────── */
+	.home-card {
+		box-sizing: border-box;
+		min-width: 0;
+		padding: 14px 16px;
+		border-radius: 16px;
+		border: 1px solid rgba(100, 150, 255, 0.14);
+		background: rgba(20, 30, 80, 0.28);
+		box-shadow:
+			0 0 44px rgba(70, 110, 255, 0.12),
+			inset 0 1px 0 rgba(255, 255, 255, 0.04);
+	}
+
+	.home-card-title {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		margin-bottom: 8px;
+		font-family: "Supernovae Orbitron", "Orbitron", monospace;
+		font-size: 0.68rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: rgba(140, 175, 255, 0.6);
+
+		.galaxy-icon svg {
+			width: 12px;
+			height: 12px;
+			opacity: 0.6;
+		}
+	}
+
+	/* ── Horloge + salutation (sans cadre) ───────── */
+	.home-center {
+		align-self: center;
 		padding-bottom: 0;
 	}
 
@@ -52,45 +125,18 @@
 		}
 	}
 
-	.home-center .galaxy-date {
-		font-size: 1.3rem !important;
-	}
-
 	.home-center .galaxy-greeting {
 		font-size: 2.75rem !important;
 	}
 
-	/* ── Boutons de navigation ───────────────────── */
-	.home-nav {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 10px;
-		padding: 14px 24px 0;
-		flex: 0 0 auto;
-	}
-
-	.home-nav-row {
+	/* ── Onglets principaux ──────────────────────── */
+	.home-tabs {
+		align-self: center;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 12px;
 		justify-content: center;
-		align-items: center;
-
-		// Rows after the main one are secondary: smaller buttons
-		& + .home-nav-row .home-nav-btn {
-			padding: 6px 16px;
-			font-size: 0.85rem;
-		}
-	}
-
-	.home-nav-group-label {
-		font-family: "Supernovae Orbitron", "Orbitron", monospace;
-		font-size: 0.65rem;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: rgba(140, 175, 255, 0.5);
-		margin-right: 6px;
+		gap: 8px;
+		padding: 12px;
 	}
 
 	.home-nav-badge {
@@ -114,7 +160,7 @@
 
 	.home-nav-btn {
 		display: inline-block;
-		padding: 10px 24px;
+		padding: 8px 16px;
 		border-radius: 12px;
 		border: 1px solid rgba(100, 150, 255, 0.18);
 		background: rgba(60, 90, 200, 0.08);
@@ -122,7 +168,7 @@
 		backdrop-filter: blur(12px);
 		color: rgba(190, 210, 255, 0.85);
 		text-decoration: none;
-		font-size: 0.95rem;
+		font-size: 0.9rem;
 		letter-spacing: 0.04em;
 		cursor: pointer;
 		transition: all 0.25s ease;
@@ -155,21 +201,124 @@
 		}
 	}
 
-	/* ── Zone basse ──────────────────────────────── */
-	.home-bottom {
-		gap: 0;
-		flex: 0 0 auto;
+	/* ── Date ────────────────────────────────────── */
+	.home-date {
+		align-self: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2px;
+		padding: 14px 16px 16px;
+		text-align: center;
+		font-family: "Supernovae Orbitron", "Orbitron", monospace;
 	}
 
-	/* ── Rythme d'écriture : série + calendrier ──── */
+	.date-weekday {
+		font-size: 0.82rem;
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: rgba(170, 195, 255, 0.65);
+	}
+
+	.date-day {
+		font-size: 3.6rem;
+		font-weight: 700;
+		line-height: 1.1;
+		color: #ffffff;
+		text-shadow:
+			0 0 14px rgba(120, 170, 255, 0.9),
+			0 0 40px rgba(90, 130, 255, 0.5);
+	}
+
+	.date-month {
+		font-size: 0.95rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: rgba(190, 210, 255, 0.85);
+	}
+
+	/* ── Listes qui défilent (groupes, récents) ──── */
+	.home-groups,
+	.home-recent {
+		display: flex;
+		flex-direction: column;
+	}
+
+	// at least about three and a half rows (the half row tells you the list scrolls),
+	// more when the card has room, and a scrollbar when the list is longer than that
+	.home-scroll {
+		flex: 1 1 8.6rem;
+		min-height: 0;
+		overflow-y: auto;
+		margin-right: -6px;
+		padding-right: 6px;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(100, 150, 255, 0.3) transparent;
+	}
+
+	.home-list {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+
+		& + .home-list {
+			margin-top: 10px;
+		}
+	}
+
+	.home-list-label {
+		font-size: 0.62rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: rgba(140, 175, 255, 0.5);
+	}
+
+	.home-list-row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 7px 12px;
+		border-radius: 10px;
+		border: 1px solid rgba(100, 150, 255, 0.1);
+		background: rgba(30, 50, 120, 0.07);
+		color: rgba(190, 210, 255, 0.85);
+		text-decoration: none;
+		font-size: 0.88rem;
+		cursor: pointer;
+		transition: all 0.25s ease;
+
+		.galaxy-icon svg {
+			width: 14px;
+			height: 14px;
+			opacity: 0.65;
+		}
+
+		&:hover {
+			background: rgba(70, 110, 255, 0.14);
+			border-color: rgba(100, 150, 255, 0.28);
+			color: #ffffff;
+			box-shadow: 0 0 14px rgba(70, 110, 255, 0.18);
+		}
+	}
+
+	.home-list-name {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/* ── Série + calendrier ──────────────────────── */
 	.home-activity {
+		// the squares are sized from the card width: 26 weeks fill it, 7px to 20px each
+		container-type: inline-size;
 		--act-gap: 3px;
-		// 53 columns fill the width, between 9px and 22px per square
-		--act-cell: clamp(9px, calc((100cqw - 200px) / 53 - 3px), 22px);
+		--act-cell: clamp(7px, calc((100cqw - 44px) / 26 - 3px), 20px);
 		--flame-a: #6f86c9;
 		--flame-b: #4a5a8f;
 		position: relative;
-		margin: 12px 0 8px;
+		display: flex;
+		flex-direction: column;
 		gap: 8px;
 
 		&.tier-spark {
@@ -194,17 +343,16 @@
 	}
 
 	.activity-hero {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
+		display: grid;
+		grid-template-columns: auto auto;
 		justify-content: center;
-		gap: 8px 44px;
-		padding: 0 24px;
+		align-items: center;
+		gap: 6px 18px;
 	}
 
 	.activity-flame .galaxy-icon svg {
-		width: 60px;
-		height: 60px;
+		width: 58px;
+		height: 58px;
 		color: var(--flame-a);
 		stroke-width: 1.5;
 		fill: color-mix(in srgb, var(--flame-b) 38%, transparent);
@@ -228,7 +376,7 @@
 
 	.activity-streak-count {
 		font-family: "Supernovae Orbitron", "Orbitron", monospace;
-		font-size: 4.4rem;
+		font-size: 3.6rem;
 		font-weight: 700;
 		line-height: 1;
 		color: #ffffff;
@@ -240,22 +388,24 @@
 
 	.activity-streak-label {
 		font-family: "Supernovae Orbitron", "Orbitron", monospace;
-		font-size: 0.9rem;
-		letter-spacing: 0.22em;
+		font-size: 0.82rem;
+		letter-spacing: 0.2em;
 		text-transform: uppercase;
 		color: var(--flame-a);
 		margin-top: 4px;
 	}
 
 	.activity-streak-hint {
-		font-size: 0.72rem;
+		font-size: 0.7rem;
 		color: rgba(170, 195, 255, 0.5);
 		margin-top: 2px;
 	}
 
 	.activity-stats {
+		grid-column: 1 / -1;
 		display: flex;
-		gap: 28px;
+		justify-content: space-around;
+		gap: 12px;
 	}
 
 	.activity-stat {
@@ -266,18 +416,25 @@
 
 	.activity-stat-value {
 		font-family: "Supernovae Orbitron", "Orbitron", monospace;
-		font-size: 1.4rem;
+		font-size: 1.3rem;
 		font-weight: 700;
 		color: rgba(220, 232, 255, 0.95);
 		text-shadow: 0 0 14px rgba(110, 150, 255, 0.55);
 	}
 
 	.activity-stat-label {
-		font-size: 0.62rem;
-		letter-spacing: 0.14em;
+		font-size: 0.58rem;
+		letter-spacing: 0.12em;
 		text-transform: uppercase;
 		color: rgba(150, 180, 255, 0.5);
 		margin-top: 2px;
+	}
+
+	.activity-panel {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		min-width: 0;
 	}
 
 	.activity-footer {
@@ -285,8 +442,7 @@
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: 6px 16px;
-		margin-top: 4px;
+		gap: 6px 12px;
 	}
 
 	.activity-tabs {
@@ -319,19 +475,6 @@
 		}
 	}
 
-	.activity-panel {
-		display: flex;
-		flex-direction: column;
-		max-width: calc(100% - 32px);
-		padding: 10px 18px 8px;
-		border-radius: 16px;
-		border: 1px solid rgba(100, 150, 255, 0.14);
-		background: rgba(20, 30, 80, 0.28);
-		box-shadow:
-			0 0 44px rgba(70, 110, 255, 0.12),
-			inset 0 1px 0 rgba(255, 255, 255, 0.04);
-	}
-
 	.activity-calendar {
 		display: flex;
 		gap: 8px;
@@ -344,7 +487,7 @@
 		row-gap: var(--act-gap);
 		// same offset as the month row above the squares
 		margin-top: calc(22px + var(--act-gap));
-		font-size: 0.6rem;
+		font-size: 0.58rem;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: rgba(150, 180, 255, 0.45);
@@ -356,6 +499,7 @@
 	}
 
 	.activity-scroll {
+		min-width: 0;
 		overflow-x: auto;
 		overflow-y: hidden;
 		padding: 4px 4px 4px 0;
@@ -373,8 +517,8 @@
 		column-gap: var(--act-gap);
 		height: 18px;
 		margin-bottom: var(--act-gap);
-		font-size: 0.62rem;
-		letter-spacing: 0.08em;
+		font-size: 0.6rem;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: rgba(150, 180, 255, 0.5);
 
@@ -465,13 +609,13 @@
 		display: flex;
 		align-items: center;
 		gap: 4px;
-		font-size: 0.62rem;
+		font-size: 0.6rem;
 		letter-spacing: 0.06em;
 		color: rgba(150, 180, 255, 0.5);
 
 		.activity-cell {
-			width: 11px;
-			height: 11px;
+			width: 10px;
+			height: 10px;
 			animation: none;
 		}
 	}
@@ -491,14 +635,156 @@
 		box-shadow: 0 0 18px rgba(70, 110, 255, 0.35);
 	}
 
-	@container (max-width: 700px) {
-		.activity-stats {
-			gap: 18px;
-		}
+	/* ── DATA NERDS : courbe + anneau ────────────── */
+	.home-data {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
 
+	.data-block {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		min-width: 0;
+	}
+
+	.data-caption {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 8px;
+		font-size: 0.66rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: rgba(150, 180, 255, 0.6);
+	}
+
+	.data-figure {
+		font-family: "Supernovae Orbitron", "Orbitron", monospace;
+		font-size: 1.1rem;
+		font-weight: 700;
+		letter-spacing: 0;
+		color: #ffffff;
+		text-shadow: 0 0 12px rgba(110, 150, 255, 0.55);
+	}
+
+	.data-line {
+		display: block;
+		width: 100%;
+		height: auto;
+		overflow: visible;
+	}
+
+	.data-grid {
+		stroke: rgba(120, 150, 255, 0.12);
+		stroke-width: 1;
+	}
+
+	.data-area {
+		fill: url(#data-area-fill);
+	}
+
+	.data-stroke {
+		fill: none;
+		stroke: #7aa8ff;
+		stroke-width: 2;
+		stroke-linejoin: round;
+		stroke-linecap: round;
+		filter: drop-shadow(0 0 4px rgba(90, 140, 255, 0.8));
+	}
+
+	.data-dot {
+		fill: #dbe8ff;
+		stroke: #5b8cff;
+		stroke-width: 1;
+	}
+
+	.data-axis {
+		fill: rgba(150, 180, 255, 0.55);
+		font-size: 9px;
+		text-transform: uppercase;
+	}
+
+	.data-donut-row {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+	}
+
+	.data-donut {
+		flex: none;
+		width: 40%;
+		max-width: 124px;
+		height: auto;
+	}
+
+	.data-donut-track {
+		fill: none;
+		stroke: rgba(120, 150, 255, 0.1);
+	}
+
+	.data-donut-arc {
+		fill: none;
+	}
+
+	.data-donut-total {
+		fill: #ffffff;
+		font-family: "Supernovae Orbitron", "Orbitron", monospace;
+		font-size: 15px;
+		font-weight: 700;
+	}
+
+	.data-legend {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		li {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			margin: 0;
+			padding: 0;
+			font-size: 0.74rem;
+			color: rgba(190, 210, 255, 0.85);
+		}
+	}
+
+	.data-swatch {
+		flex: none;
+		width: 9px;
+		height: 9px;
+		border-radius: 3px;
+	}
+
+	.data-legend-name {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.data-legend-count {
+		color: rgba(150, 180, 255, 0.7);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.data-empty {
+		font-size: 0.78rem;
+		color: rgba(170, 195, 255, 0.5);
+	}
+
+	@container (max-width: 700px) {
 		.activity-flame .galaxy-icon svg {
-			width: 48px;
-			height: 48px;
+			width: 46px;
+			height: 46px;
 		}
 	}
 

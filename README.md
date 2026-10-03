@@ -30,10 +30,12 @@ Every new empty tab is replaced by the galaxy view:
 Create a note named `Home.md` in your vault. Whenever you open it, Supernovae Tab intercepts the navigation and displays a dedicated Home Dashboard instead:
 
 - Same galaxy background as the new tab
+- **Three-column layout** that scales itself to the window (side panels open or not): main tabs, clock, date card, link groups, recent notes, streak and calendar, data card
 - **Navigation buttons** — configurable links to your key notes and folders, or to any Obsidian command (path `command:<id>`)
-- **Recent files** — your 5 most recently edited notes
+- **Recent files** — your 5 most recently edited notes, in a scrolling list
 - **Writing streak and calendar** — a big "days in a row" counter and a one-square-per-day calendar of the notes you created (hover for details, click to open the day's journal note)
-- **Link groups** — navigation links sharing a group get their own labelled row
+- **Link groups** — navigation links sharing a group are listed together in a scrolling card (e.g. *Cursus MIAGE*)
+- **Data card (DATA NERDS)** — notes created per month (line) and notes per domain (donut), from the sub-folders of a folder you choose
 - **Flashcards badge** — optional counter of Spaced Repetition cards to review (due or new) on a navigation button
 - **Tab protection** — clicking any file from the Home Dashboard opens it in a new tab, preserving the Home view
 
@@ -79,7 +81,7 @@ All settings are available under **Settings → Supernovae Tab**.
 | **Greeting** | Your name (used via `{{name}}`); show/hide greeting; custom greeting text |
 | **Recent files** | Show/hide the recent files section |
 | **Bookmarks** | Show/hide bookmarks; display all bookmarks or a specific group |
-| **Home Dashboard** | Take over `Home.md` (on/off); show/hide the writing activity; edit the navigation links (label, path or `command:<id>`, group, due-cards badge) |
+| **Home Dashboard** | Take over `Home.md` (on/off); show/hide the writing activity and the data panel; folder whose sub-folders are the domains; edit the navigation links (label, path or `command:<id>`, group, due-cards badge) |
 | **Quotes** | Show/hide quotes; choose between built-in quotes, your own, or both |
 
 ### Greeting placeholders
@@ -103,8 +105,19 @@ All settings are available under **Settings → Supernovae Tab**.
 The dashboard shows how regularly you write. Each note counts once, on the day given by its `Date`, `created` or `création` property (`YYYY-MM-DD`). Notes in `06 - Templates/` and `Home` are ignored.
 
 - **Streak** — consecutive days with at least one note. It stays alive until the end of today: if you have not written yet this morning, yesterday's streak is still shown.
-- **Calendar** — the last 12 months, or one calendar year at a time. Hover a square for the count, click it to open the note named after that day (`YYYY-MM-DD`).
+- **Calendar** — the last six months, or one calendar year at a time. Hover a square for the count, click it to open the note named after that day (`YYYY-MM-DD`).
 - Turn it off with **Settings → Supernovae Tab → Show writing activity**.
+
+---
+
+## Home Dashboard — Data card
+
+The **DATA NERDS** card shows two charts, drawn as plain SVG (no chart library, no file is read):
+
+- **Notes created per month** over the last twelve months, from the same `Date` / `created` / `création` property as the writing calendar.
+- **Notes per domain**: a donut with one slice per sub-folder of the **Domains folder** setting (default `03 - CONTENTS`; the leading number of a folder name is dropped, so `02-Code` reads *Code*). The six biggest domains are listed, the rest is grouped as *Autres*.
+
+Hover a point or a slice for its figures. Turn the card off with **Settings → Supernovae Tab → Show data panel**.
 
 ---
 

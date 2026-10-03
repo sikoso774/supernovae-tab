@@ -3,7 +3,8 @@ import { Notice, TFile, moment } from "obsidian";
 import { useObsidian } from "../../Context/ObsidianAppContext";
 import getTimeOfDayGreeting from "React/Utils/getTimeOfDayGreeting";
 import Observable from "src/Utils/Observable";
-import { attachFit } from "React/Utils/fitToHeight";
+import { attachFit } from "React/Utils/fitToWindow";
+import useWritingActivity from "React/Utils/useWritingActivity";
 import { TabGalaxyPluginSettings } from "src/Settings/Settings";
 import { NavLink } from "src/Types/Interfaces";
 import TabGalaxyPlugin from "main";
@@ -11,6 +12,8 @@ import StarField from "../StarField/StarField";
 import Icon from "../Icon/Icon";
 import Clock from "../Clock/Clock";
 import Activity from "./Activity";
+import DataNerds from "./DataNerds";
+import DateCard from "./DateCard";
 import DueBadge from "./DueBadge";
 import useVaultFiles, {
 	getRecentMarkdownFiles,
@@ -21,9 +24,9 @@ interface NavRow {
 	links: NavLink[];
 }
 
-// One row per group, in order of first appearance; links without a group share the main row
 const COMMAND_PREFIX = "command:";
 
+// One row per group, in order of first appearance; links without a group share the main row
 const groupLinks = (links: NavLink[]): NavRow[] => {
 	const rows: NavRow[] = [];
 	for (const link of links) {
@@ -55,10 +58,14 @@ const Home = ({
 	const latestFiles = useVaultFiles(obsidian, (app) =>
 		getRecentMarkdownFiles(app)
 	);
+	// Read once and shared by the streak card and the data card
+	const counts = useWritingActivity(obsidian);
 	const navRows = useMemo(
 		() => groupLinks(settings.homeNavLinks),
 		[settings.homeNavLinks]
 	);
+	const mainLinks = navRows.find((row) => row.group === "")?.links ?? [];
+	const groupRows = navRows.filter((row) => row.group !== "");
 
 	const resolvePath = (path: string) =>
 		path === "{{today}}" ? moment().format("YYYY-MM-DD") : path;
@@ -123,68 +130,106 @@ const Home = ({
 			<div className="galaxy-wrapper home-wrapper">
 				<div className="home-fit" ref={fitRef}>
 					<div className="home-pad home-pad--top" />
-					{/* Heure + greeting */}
-					<div className="galaxy-center home-center">
-						<Clock
-							timeFormat={settings.timeFormat}
-							dateLanguage={settings.dateLanguage}
-							className="home-time"
-						/>
-						<div className="galaxy-greeting">
-							{settings.greetingText
-								.replace(/{{greeting}}/gi, getTimeOfDayGreeting())
-								.replace(
-									/{{name}}/gi,
-									settings.userName || "explorer"
-								)}
+					<div className="home-grid">
+						{/* Onglets principaux */}
+						<div className="home-card home-tabs">
+							{mainLinks.map((link) => (
+								<a
+									key={`${link.label}-${link.path}`}
+									className={`home-nav-btn${link.path === "{{today}}" ? " home-nav-btn--today" : ""}`}
+									onClick={() => openLink(link.path)}
+								>
+									{link.label}
+									{link.badge === "due-cards" && <DueBadge />}
+								</a>
+							))}
 						</div>
-					</div>
 
-					{/* Boutons de navigation, une rangée par groupe */}
-					<div className="home-nav">
-						{navRows.map(({ group, links }) => (
-							<div key={group || "main"} className="home-nav-row">
-								{group && (
-									<span className="home-nav-group-label">
-										{group}
-									</span>
-								)}
-								{links.map(({ label, path, badge }) => (
-									<a
-										key={`${label}-${path}`}
-										className={`home-nav-btn${path === "{{today}}" ? " home-nav-btn--today" : ""}`}
-										onClick={() => openLink(path)}
-									>
-										{label}
-										{badge === "due-cards" && <DueBadge />}
-									</a>
-								))}
+						{/* Heure + salutation */}
+						<div className="galaxy-center home-center">
+							<Clock
+								timeFormat={settings.timeFormat}
+								dateLanguage={settings.dateLanguage}
+								showDate={false}
+								className="home-time"
+							/>
+							<div className="galaxy-greeting">
+								{settings.greetingText
+									.replace(/{{greeting}}/gi, getTimeOfDayGreeting())
+									.replace(
+										/{{name}}/gi,
+										settings.userName || "explorer"
+									)}
 							</div>
-						))}
-					</div>
+						</div>
 
-					{/* Activité + Récents */}
-					<div className="galaxy-bottom home-bottom">
-						{settings.showActivity && <Activity onOpenDay={openDay} />}
+						<DateCard language={settings.dateLanguage} />
 
-						<div className="galaxy-section">
-							<div className="galaxy-section-label">
+						{/* Groupes de liens (MIAGE…) : liste qui défile */}
+						{groupRows.length > 0 && (
+							<div className="home-card home-groups">
+								<div className="home-card-title">
+									{groupRows.length === 1
+										? groupRows[0].group
+										: "Raccourcis"}
+								</div>
+								<div className="home-scroll">
+									{groupRows.map((row) => (
+										<div key={row.group} className="home-list">
+											{groupRows.length > 1 && (
+												<div className="home-list-label">
+													{row.group}
+												</div>
+											)}
+											{row.links.map((link) => (
+												<a
+													key={`${link.label}-${link.path}`}
+													className="home-list-row"
+													onClick={() => openLink(link.path)}
+												>
+													{link.label}
+													{link.badge === "due-cards" && (
+														<DueBadge />
+													)}
+												</a>
+											))}
+										</div>
+									))}
+								</div>
+							</div>
+						)}
+
+						{/* Série + calendrier */}
+						{settings.showActivity && (
+							<Activity counts={counts} onOpenDay={openDay} />
+						)}
+
+						{/* Graphiques */}
+						{settings.showDataNerds && (
+							<DataNerds counts={counts} root={settings.domainsFolder} />
+						)}
+
+						{/* Notes récentes : liste qui défile */}
+						<div className="home-card home-recent">
+							<div className="home-card-title">
 								<Icon name="clock" />
 								<span>Récents</span>
 							</div>
-							<div className="galaxy-recentlyedited">
-								{latestFiles.map((file) => (
-									<a
-										key={file.path}
-										className="galaxy-recentlyedited-file"
-										onClick={() => openTFile(file)}
-									>
-										<Icon name="file" />
-										<span className="galaxy-recentlyedited-file-name">
-											{file.basename}
-										</span>
-									</a>
-								))}
+							<div className="home-scroll">
+								<div className="home-list">
+									{latestFiles.map((file) => (
+										<a
+											key={file.path}
+											className="home-list-row"
+											onClick={() => openTFile(file)}
+										>
+											<Icon name="file" />
+											<span className="home-list-name">
+												{file.basename}
+											</span>
+										</a>
+									))}
+								</div>
 							</div>
 						</div>
 					</div>
