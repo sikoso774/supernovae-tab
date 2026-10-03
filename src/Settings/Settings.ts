@@ -36,6 +36,8 @@ export interface TabGalaxyPluginSettings {
 	greetingText: string;
 	showInlineSearch: boolean;
 	inlineSearchProvider: SearchProvider;
+	useBuiltInSearch: boolean;
+	searchExcludedFolders: string;
 	showRecentFiles: boolean;
 	showBookmarks: boolean;
 	bookmarkSource: BOOKMARK_SOURCE;
@@ -63,6 +65,8 @@ export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
 	greetingText: "{{greeting}}, {{name}}.",
 	showInlineSearch: true,
 	inlineSearchProvider: DEFAULT_SEARCH_PROVIDER,
+	useBuiltInSearch: true,
+	searchExcludedFolders: "06 - Templates",
 	showRecentFiles: true,
 	showBookmarks: false,
 	bookmarkSource: BOOKMARK_SOURCE.ALL,
@@ -188,9 +192,41 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
+			.setName("Built-in full-text search")
+			.setDesc(
+				`Search the content of every note right in the tab, with an inline preview, instead of opening the provider below.`
+			)
+			.addToggle((component) => {
+				component.setValue(this.plugin.settings.useBuiltInSearch);
+				component.onChange((value) => {
+					this.plugin.settings.useBuiltInSearch = value;
+					this.plugin.updateSettings();
+					this.display();
+				});
+			});
+
+		if (this.plugin.settings.useBuiltInSearch) {
+			new Setting(containerEl)
+				.setName("Folders left out of the search")
+				.setDesc(
+					`Folders that the built-in search ignores, separated by commas (templates, for instance).`
+				)
+				.addText((component) => {
+					component
+						.setPlaceholder("06 - Templates")
+						.setValue(this.plugin.settings.searchExcludedFolders)
+						.onChange((value) => {
+							this.plugin.settings.searchExcludedFolders = value;
+							this.plugin.updateSettings();
+							this.plugin.search?.scheduleRebuild();
+						});
+				});
+		}
+
+		new Setting(containerEl)
 			.setName("Inline search provider")
 			.setDesc(
-				`Which plugin should be utilized for search when clicking the middle of the screen button?`
+				`Which plugin should be utilized for search when clicking the middle of the screen button? Only used when the built-in search is off.`
 			)
 			.setClass("search-provider")
 			.addText((component) => {

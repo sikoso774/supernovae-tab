@@ -3,6 +3,7 @@ import { ReactView, GALAXY_REACT_VIEW } from "./Views/ReactView";
 import { HomeView, GALAXY_HOME_VIEW } from "./Views/HomeView";
 import Observable from "src/Utils/Observable";
 import "src/Types/ObsidianInternal";
+import VaultSearch from "src/Search/VaultSearch";
 import {
 	TabGalaxyPluginSettingTab,
 	TabGalaxyPluginSettings,
@@ -21,6 +22,8 @@ if (process.env.NODE_ENV === "development" && !Platform.isMobile) {
 export default class TabGalaxyPlugin extends Plugin {
 	settings: TabGalaxyPluginSettings;
 	settingsObservable: Observable<TabGalaxyPluginSettings>;
+	/** Full-text index behind the New Tab search; absent when the plugin stays off on mobile. */
+	search?: VaultSearch;
 	bypassHomeIntercept = false;
 	// Weak: closed leaves are garbage-collected, no manual cleanup needed.
 	// Entries must outlive HomeView.onClose (used to redirect file opens).
@@ -63,6 +66,10 @@ export default class TabGalaxyPlugin extends Plugin {
 
 		this.addSettingTab(new TabGalaxyPluginSettingTab(this.app, this));
 
+		// Indexed once the workspace is ready, so the startup is not slowed down
+		this.search = new VaultSearch(this);
+		this.app.workspace.onLayoutReady(() => this.search?.start());
+
 		this.registerEvent(
 			this.app.workspace.on("layout-change", () => this.onLayoutChange())
 		);
@@ -83,7 +90,9 @@ export default class TabGalaxyPlugin extends Plugin {
 		}
 	}
 
-	onunload() {}
+	onunload() {
+		this.search?.stop();
+	}
 
 	private async onFileOpen(file: TFile | null): Promise<void> {
 		if (!file) return;
