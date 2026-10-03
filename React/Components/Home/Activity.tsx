@@ -86,10 +86,12 @@ const Activity = ({ onOpenDay }: { onOpenDay: (day: string) => void }) => {
 		}
 		const cell = target.getBoundingClientRect();
 		const box = root.getBoundingClientRect();
+		// The dashboard may be scaled down to fit: convert screen pixels back to layout pixels
+		const scale = box.width / root.offsetWidth || 1;
 		setTip({
 			text: describeDay(day, Number(target.dataset.count || 0)),
-			left: cell.left - box.left + cell.width / 2,
-			top: cell.top - box.top,
+			left: (cell.left - box.left + cell.width / 2) / scale,
+			top: (cell.top - box.top) / scale,
 		});
 	};
 

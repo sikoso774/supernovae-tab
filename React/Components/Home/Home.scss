@@ -1,14 +1,41 @@
 .workspace-tabs .workspace-leaf-content.tab-galaxy-home {
 
+	// The dashboard scales itself to the window (see .home-fit and fitToHeight.ts).
+	// Clipped, because a scaled box still occupies its unscaled size; fitToHeight
+	// switches to scrolling only once the minimum scale is reached
 	.home-wrapper {
+		display: block !important;
 		box-sizing: border-box;
-		justify-content: space-between;
-		padding: 18px 0 14px;
-		// The activity calendar can be taller than a small window: scroll, never clip
-		overflow-x: hidden;
-		overflow-y: auto;
+		overflow: hidden;
 		scrollbar-width: thin;
 		scrollbar-color: rgba(100, 150, 255, 0.3) transparent;
+	}
+
+	.home-fit {
+		--fit: 1;
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		// scaled by --fit, so this box is taller than the wrapper by 1 / --fit and fills it once scaled
+		height: calc(100% / var(--fit));
+		transform: scale(var(--fit));
+		transform-origin: top center;
+	}
+
+	.home-pad {
+		flex: none;
+
+		&--top {
+			height: 18px;
+		}
+
+		// leaves room for Obsidian's floating status bar
+		&--bottom {
+			height: 48px;
+		}
 	}
 
 	/* Heure plus compacte que le new tab */
@@ -17,9 +44,8 @@
 		padding-bottom: 0;
 	}
 
-	// Sized from the window height so the whole dashboard fits without scrolling
 	.home-time {
-		font-size: clamp(4rem, 14cqh, 9rem) !important;
+		font-size: 8.5rem !important;
 
 		@container (max-width: 520px) {
 			font-size: 20cqw !important;
@@ -27,11 +53,11 @@
 	}
 
 	.home-center .galaxy-date {
-		font-size: clamp(1rem, 2.2cqh, 1.5rem) !important;
+		font-size: 1.3rem !important;
 	}
 
 	.home-center .galaxy-greeting {
-		font-size: clamp(1.5rem, 4.4cqh, 3rem) !important;
+		font-size: 2.75rem !important;
 	}
 
 	/* ── Boutons de navigation ───────────────────── */
@@ -138,16 +164,8 @@
 	/* ── Rythme d'écriture : série + calendrier ──── */
 	.home-activity {
 		--act-gap: 3px;
-		// Squares fill the width (53 columns) but never grow past the height left
-		// under the other sections: ~590px = everything else on the dashboard
-		--act-cell: clamp(
-			9px,
-			min(
-				calc((100cqw - 200px) / 53 - 3px),
-				calc((100cqh - 590px) / 7 - 3px)
-			),
-			22px
-		);
+		// 53 columns fill the width, between 9px and 22px per square
+		--act-cell: clamp(9px, calc((100cqw - 200px) / 53 - 3px), 22px);
 		--flame-a: #6f86c9;
 		--flame-b: #4a5a8f;
 		position: relative;
@@ -210,7 +228,7 @@
 
 	.activity-streak-count {
 		font-family: "Supernovae Orbitron", "Orbitron", monospace;
-		font-size: clamp(2.8rem, 7cqh, 4.6rem);
+		font-size: 4.4rem;
 		font-weight: 700;
 		line-height: 1;
 		color: #ffffff;

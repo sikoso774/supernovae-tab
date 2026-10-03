@@ -3,6 +3,7 @@ import { Notice, TFile, moment } from "obsidian";
 import { useObsidian } from "../../Context/ObsidianAppContext";
 import getTimeOfDayGreeting from "React/Utils/getTimeOfDayGreeting";
 import Observable from "src/Utils/Observable";
+import { attachFit } from "React/Utils/fitToHeight";
 import { TabGalaxyPluginSettings } from "src/Settings/Settings";
 import { NavLink } from "src/Types/Interfaces";
 import TabGalaxyPlugin from "main";
@@ -48,6 +49,7 @@ const Home = ({
 		settingsObservable.getValue()
 	);
 	const mainDivRef = useRef<HTMLDivElement>(null);
+	const fitRef = useRef<HTMLDivElement>(null);
 	const obsidian = useObsidian();
 
 	const latestFiles = useVaultFiles(obsidian, (app) =>
@@ -107,74 +109,86 @@ const Home = ({
 		mainDivRef.current?.focus();
 	}, []);
 
+	// Scale the whole dashboard down when the window is too small for it
+	useEffect(() => {
+		const fit = fitRef.current;
+		const wrapper = fit?.parentElement;
+		if (!fit || !wrapper) return;
+		return attachFit(fit, wrapper);
+	}, []);
+
 	return (
 		<div className="galaxy-root" ref={mainDivRef} tabIndex={0}>
 			<StarField />
 			<div className="galaxy-wrapper home-wrapper">
-				{/* Heure + greeting */}
-				<div className="galaxy-center home-center">
-					<Clock
-						timeFormat={settings.timeFormat}
-						dateLanguage={settings.dateLanguage}
-						className="home-time"
-					/>
-					<div className="galaxy-greeting">
-						{settings.greetingText
-							.replace(/{{greeting}}/gi, getTimeOfDayGreeting())
-							.replace(
-								/{{name}}/gi,
-								settings.userName || "explorer"
-							)}
+				<div className="home-fit" ref={fitRef}>
+					<div className="home-pad home-pad--top" />
+					{/* Heure + greeting */}
+					<div className="galaxy-center home-center">
+						<Clock
+							timeFormat={settings.timeFormat}
+							dateLanguage={settings.dateLanguage}
+							className="home-time"
+						/>
+						<div className="galaxy-greeting">
+							{settings.greetingText
+								.replace(/{{greeting}}/gi, getTimeOfDayGreeting())
+								.replace(
+									/{{name}}/gi,
+									settings.userName || "explorer"
+								)}
+						</div>
 					</div>
-				</div>
 
-				{/* Boutons de navigation, une rangée par groupe */}
-				<div className="home-nav">
-					{navRows.map(({ group, links }) => (
-						<div key={group || "main"} className="home-nav-row">
-							{group && (
-								<span className="home-nav-group-label">
-									{group}
-								</span>
-							)}
-							{links.map(({ label, path, badge }) => (
-								<a
-									key={`${label}-${path}`}
-									className={`home-nav-btn${path === "{{today}}" ? " home-nav-btn--today" : ""}`}
-									onClick={() => openLink(path)}
-								>
-									{label}
-									{badge === "due-cards" && <DueBadge />}
-								</a>
-							))}
-						</div>
-					))}
-				</div>
-
-				{/* Activité + Récents */}
-				<div className="galaxy-bottom home-bottom">
-					{settings.showActivity && <Activity onOpenDay={openDay} />}
-
-					<div className="galaxy-section">
-						<div className="galaxy-section-label">
-							<Icon name="clock" />
-							<span>Récents</span>
-						</div>
-						<div className="galaxy-recentlyedited">
-							{latestFiles.map((file) => (
-								<a
-									key={file.path}
-									className="galaxy-recentlyedited-file"
-									onClick={() => openTFile(file)}
-								>
-									<Icon name="file" />
-									<span className="galaxy-recentlyedited-file-name">
-										{file.basename}
+					{/* Boutons de navigation, une rangée par groupe */}
+					<div className="home-nav">
+						{navRows.map(({ group, links }) => (
+							<div key={group || "main"} className="home-nav-row">
+								{group && (
+									<span className="home-nav-group-label">
+										{group}
 									</span>
-								</a>
-							))}
+								)}
+								{links.map(({ label, path, badge }) => (
+									<a
+										key={`${label}-${path}`}
+										className={`home-nav-btn${path === "{{today}}" ? " home-nav-btn--today" : ""}`}
+										onClick={() => openLink(path)}
+									>
+										{label}
+										{badge === "due-cards" && <DueBadge />}
+									</a>
+								))}
+							</div>
+						))}
+					</div>
+
+					{/* Activité + Récents */}
+					<div className="galaxy-bottom home-bottom">
+						{settings.showActivity && <Activity onOpenDay={openDay} />}
+
+						<div className="galaxy-section">
+							<div className="galaxy-section-label">
+								<Icon name="clock" />
+								<span>Récents</span>
+							</div>
+							<div className="galaxy-recentlyedited">
+								{latestFiles.map((file) => (
+									<a
+										key={file.path}
+										className="galaxy-recentlyedited-file"
+										onClick={() => openTFile(file)}
+									>
+										<Icon name="file" />
+										<span className="galaxy-recentlyedited-file-name">
+											{file.basename}
+										</span>
+									</a>
+								))}
+							</div>
 						</div>
 					</div>
+					<div className="home-pad home-pad--bottom" />
 				</div>
 			</div>
 		</div>
