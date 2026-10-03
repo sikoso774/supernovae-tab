@@ -16,6 +16,7 @@ import { SearchHit } from "React/Utils/searchIndex";
 import SearchInput from "../Search/SearchInput";
 import SearchPanel from "../Search/SearchPanel";
 import { middleClick, openInNewTab, openInThisTab } from "React/Utils/openNote";
+import { showFileMenu } from "React/Utils/fileMenu";
 
 const PRINTABLE_KEY = /^[A-Za-z0-9]$/;
 /** Results skipped by Page Up / Page Down. */
@@ -228,6 +229,7 @@ const App = ({
 												data-path={file.path}
 												onClick={() => openInThisTab(obsidian, file)}
 												{...middleClick(() => openInNewTab(obsidian, file))}
+												onContextMenu={(e) => showFileMenu(obsidian, file, e)}
 											>
 												<Icon name="file" />
 												<span className="galaxy-recentlyedited-file-name">
@@ -255,6 +257,7 @@ const App = ({
 												data-path={file.path}
 												onClick={() => openInThisTab(obsidian, file)}
 												{...middleClick(() => openInNewTab(obsidian, file))}
+												onContextMenu={(e) => showFileMenu(obsidian, file, e)}
 											>
 												<Icon name="file" />
 												<span className="galaxy-recentlyedited-file-name">
