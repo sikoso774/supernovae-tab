@@ -18,6 +18,7 @@ import DueBadge from "./DueBadge";
 import useVaultFiles, {
 	getRecentMarkdownFiles,
 } from "React/Utils/useVaultFiles";
+import { middleClick, openInNewTab } from "React/Utils/openNote";
 
 interface NavRow {
 	group: string;
@@ -70,9 +71,8 @@ const Home = ({
 	const resolvePath = (path: string) =>
 		path === "{{today}}" ? moment().format("YYYY-MM-DD") : path;
 
-	const openTFile = (file: TFile) => {
-		void obsidian?.workspace.getMostRecentLeaf()?.openFile(file);
-	};
+	// Always in a tab of its own: the dashboard stays where it is
+	const openTFile = (file: TFile) => openInNewTab(obsidian, file);
 
 	// A link path "command:<id>" runs that Obsidian command instead of opening a note
 	const openLink = (path: string) => {
@@ -138,6 +138,7 @@ const Home = ({
 									key={`${link.label}-${link.path}`}
 									className={`home-nav-btn${link.path === "{{today}}" ? " home-nav-btn--today" : ""}`}
 									onClick={() => openLink(link.path)}
+									{...middleClick(() => openLink(link.path))}
 								>
 									{link.label}
 									{link.badge === "due-cards" && <DueBadge />}
@@ -186,6 +187,7 @@ const Home = ({
 													key={`${link.label}-${link.path}`}
 													className="home-list-row"
 													onClick={() => openLink(link.path)}
+													{...middleClick(() => openLink(link.path))}
 												>
 													{link.label}
 													{link.badge === "due-cards" && (
@@ -222,6 +224,7 @@ const Home = ({
 											key={file.path}
 											className="home-list-row"
 											onClick={() => openTFile(file)}
+											{...middleClick(() => openTFile(file))}
 										>
 											<Icon name="file" />
 											<span className="home-list-name">

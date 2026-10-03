@@ -1,0 +1,339 @@
+// New Tab search: the input, the `is-searching` layout of the tab, the result
+// list and the preview. Only the foreground: the starfield is not touched.
+
+$glass-border: rgba(100, 150, 255, 0.14);
+$glass-fill: rgba(20, 30, 80, 0.28);
+$glass-shadow:
+	0 0 44px rgba(70, 110, 255, 0.12),
+	inset 0 1px 0 rgba(255, 255, 255, 0.04);
+$scroll-thumb: rgba(100, 150, 255, 0.3);
+
+.workspace-tabs .workspace-leaf-content.tab-galaxy .galaxy-root {
+	/* The bar is a real input, inside the glass pill of the old link */
+	.galaxy-search-box {
+		cursor: text;
+
+		&:focus-within {
+			background: rgba(60, 90, 200, 0.16);
+			border-color: rgba(100, 150, 255, 0.45);
+			box-shadow:
+				0 0 35px rgba(70, 110, 255, 0.25),
+				inset 0 1px 0 rgba(255, 255, 255, 0.08);
+		}
+
+		.galaxy-icon {
+			display: inline-flex;
+			flex: 0 0 auto;
+		}
+
+		input.galaxy-search-input {
+			flex: 1 1 auto;
+			min-width: 0;
+			height: 100%;
+			margin: 0;
+			padding: 0 16px;
+			font-size: 22px;
+			line-height: 1;
+			letter-spacing: 0.03em;
+			color: rgba(220, 232, 255, 0.95);
+			background: transparent;
+			border: none;
+			border-radius: 0;
+			box-shadow: none;
+			outline: none;
+
+			&::placeholder {
+				color: rgba(190, 210, 255, 0.5);
+			}
+
+			&:hover,
+			&:focus,
+			&:focus-visible {
+				background: transparent;
+				border: none;
+				box-shadow: none;
+				outline: none;
+			}
+		}
+
+		.galaxy-search-clear {
+			display: inline-flex;
+			flex: 0 0 auto;
+			align-items: center;
+			justify-content: center;
+			width: 36px;
+			height: 36px;
+			margin-right: 12px;
+			border-radius: 50%;
+			color: rgba(150, 185, 255, 0.6);
+			cursor: pointer;
+			transition: all 0.2s ease;
+
+			&:hover {
+				color: #ffffff;
+				background: rgba(110, 150, 255, 0.18);
+			}
+
+			svg {
+				width: 16px;
+				height: 16px;
+			}
+		}
+	}
+
+	/* Searching: the clock shrinks, the rest of the foreground makes room for the results */
+	.galaxy-wrapper {
+		.galaxy-top,
+		.galaxy-center {
+			transition: flex 0.3s ease;
+		}
+
+		.galaxy-center .galaxy-time {
+			transition: font-size 0.3s ease;
+		}
+	}
+
+	&.is-searching .galaxy-wrapper {
+		.galaxy-top {
+			flex: 0 0 52px;
+		}
+
+		.galaxy-center {
+			flex: 0 0 auto;
+			padding-bottom: 6px;
+
+			.galaxy-time {
+				font-size: 4.5rem;
+			}
+
+			.galaxy-date,
+			.galaxy-greeting {
+				display: none;
+			}
+		}
+
+		.galaxy-bottom {
+			flex: 1 1 0;
+			min-height: 0;
+
+			.galaxy-search {
+				flex: 0 0 auto;
+				width: min(1180px, 92%);
+				min-width: 0;
+			}
+
+			.galaxy-search-wrapper {
+				margin-bottom: 12px;
+			}
+
+			.galaxy-section {
+				display: none;
+			}
+		}
+
+		.galaxy-quote {
+			display: none;
+		}
+	}
+
+	.galaxy-results {
+		box-sizing: border-box;
+		flex: 1 1 0;
+		min-height: 0;
+		width: min(1180px, 92%);
+		// Obsidian's floating status bar sits in the bottom-right corner
+		margin-bottom: 52px;
+		display: grid;
+		grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr);
+		gap: 14px;
+		text-align: left;
+
+		.galaxy-results-list,
+		.galaxy-preview {
+			box-sizing: border-box;
+			min-height: 0;
+			border-radius: 16px;
+			border: 1px solid $glass-border;
+			background: $glass-fill;
+			-webkit-backdrop-filter: blur(12px);
+			backdrop-filter: blur(12px);
+			box-shadow: $glass-shadow;
+		}
+
+		.galaxy-results-list {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			overflow-y: auto;
+			padding: 8px;
+			scrollbar-width: thin;
+			scrollbar-color: $scroll-thumb transparent;
+		}
+
+		.galaxy-results-caption {
+			padding: 6px 10px 8px;
+			font-family: "Supernovae Orbitron", "Orbitron", monospace;
+			font-size: 0.65rem;
+			letter-spacing: 0.18em;
+			text-transform: uppercase;
+			color: rgba(140, 175, 255, 0.55);
+
+			&.is-warning {
+				font-family: inherit;
+				letter-spacing: 0.02em;
+				text-transform: none;
+				color: rgba(255, 205, 130, 0.8);
+			}
+		}
+
+		.galaxy-results-empty {
+			padding: 28px 12px;
+			text-align: center;
+			color: rgba(170, 195, 255, 0.6);
+		}
+
+		.galaxy-result {
+			padding: 9px 12px;
+			border-radius: 10px;
+			border: 1px solid transparent;
+			cursor: pointer;
+			transition:
+				background 0.15s ease,
+				border-color 0.15s ease,
+				box-shadow 0.15s ease;
+
+			&.is-selected {
+				background: rgba(70, 110, 255, 0.16);
+				border-color: rgba(100, 150, 255, 0.35);
+				box-shadow: 0 0 18px rgba(70, 110, 255, 0.15);
+			}
+
+			.galaxy-result-title {
+				overflow: hidden;
+				font-size: 1rem;
+				font-weight: 500;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				color: #ffffff;
+			}
+
+			.galaxy-result-path {
+				overflow: hidden;
+				margin: 2px 0 4px;
+				font-size: 0.7rem;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				color: rgba(130, 165, 255, 0.6);
+			}
+
+			.galaxy-result-snippet {
+				display: -webkit-box;
+				overflow: hidden;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 3;
+				font-size: 0.8rem;
+				line-height: 1.4;
+				color: rgba(190, 210, 255, 0.7);
+			}
+		}
+
+		mark.galaxy-hit {
+			padding: 0 2px;
+			border-radius: 3px;
+			background: rgba(110, 160, 255, 0.3);
+			color: #ffffff;
+			box-shadow: 0 0 10px rgba(110, 160, 255, 0.35);
+		}
+
+		.galaxy-preview {
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+
+			.galaxy-preview-head {
+				flex: 0 0 auto;
+				padding: 12px 18px 10px;
+				border-bottom: 1px solid rgba(100, 150, 255, 0.12);
+			}
+
+			.galaxy-preview-title {
+				display: block;
+				overflow: hidden;
+				font-size: 1.15rem;
+				text-decoration: none;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				color: #ffffff;
+				cursor: pointer;
+
+				&:hover {
+					text-shadow: 0 0 10px rgba(160, 190, 255, 0.7);
+				}
+			}
+
+			.galaxy-preview-path {
+				margin-top: 2px;
+				font-size: 0.7rem;
+				color: rgba(130, 165, 255, 0.6);
+			}
+
+			.galaxy-preview-empty {
+				padding: 18px;
+				font-size: 0.85rem;
+				text-align: center;
+				color: rgba(170, 195, 255, 0.4);
+			}
+
+			.galaxy-preview-body {
+				position: relative;
+				flex: 1 1 0;
+				min-height: 0;
+				overflow-y: auto;
+				padding: 4px 18px 18px;
+				scrollbar-width: thin;
+				scrollbar-color: $scroll-thumb transparent;
+			}
+
+			.galaxy-preview-render {
+				// Obsidian's reading styles, without the layout of a whole view
+				height: auto;
+				padding: 0;
+				overflow: visible;
+
+				&.is-rendering {
+					position: absolute;
+					top: 0;
+					left: 18px;
+					right: 18px;
+					visibility: hidden;
+				}
+
+				&.is-plain {
+					white-space: pre-wrap;
+					font-size: 0.8rem;
+				}
+
+				> :first-child {
+					margin-top: 0;
+				}
+
+				img,
+				svg,
+				canvas,
+				video {
+					max-width: 100%;
+					height: auto;
+				}
+			}
+		}
+
+		// Last, so that it wins over the `display` set on the preview above
+		@container (max-width: 760px) {
+			grid-template-columns: minmax(0, 1fr);
+
+			.galaxy-preview {
+				display: none;
+			}
+		}
+	}
+}
