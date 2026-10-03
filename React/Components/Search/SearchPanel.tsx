@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import VaultSearch, { SearchStatus } from "src/Search/VaultSearch";
 import { SearchHit, SearchResult } from "React/Utils/searchIndex";
+import { middleClick } from "React/Utils/openNote";
 import {
 	Range,
 	Snippet,
@@ -76,7 +77,7 @@ const SearchPanel = ({
 						className={`galaxy-result${i === selected ? " is-selected" : ""}`}
 						onMouseMove={() => i !== selected && onSelect(i)}
 						onClick={(e) => onOpen(hit, e.ctrlKey || e.metaKey)}
-						onAuxClick={(e) => e.button === 1 && onOpen(hit, true)}
+						{...middleClick(() => onOpen(hit, true))}
 					>
 						<div className="galaxy-result-title">
 							<Highlighted text={hit.title} ranges={titleRanges} />

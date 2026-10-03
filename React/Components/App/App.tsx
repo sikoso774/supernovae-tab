@@ -15,6 +15,7 @@ import useVaultSearch from "React/Utils/useVaultSearch";
 import { SearchHit } from "React/Utils/searchIndex";
 import SearchInput from "../Search/SearchInput";
 import SearchPanel from "../Search/SearchPanel";
+import { middleClick, openInNewTab, openInThisTab } from "React/Utils/openNote";
 
 const PRINTABLE_KEY = /^[A-Za-z0-9]$/;
 /** Results skipped by Page Up / Page Down. */
@@ -54,10 +55,8 @@ const App = ({
 	const openHit = (hit: SearchHit, newTab: boolean) => {
 		const file = obsidian?.vault.getAbstractFileByPath(hit.path);
 		if (!(file instanceof TFile)) return;
-		const leaf = newTab
-			? obsidian?.workspace.getLeaf("tab")
-			: obsidian?.workspace.getMostRecentLeaf();
-		void leaf?.openFile(file);
+		if (newTab) openInNewTab(obsidian, file);
+		else openInThisTab(obsidian, file);
 	};
 
 	const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -227,13 +226,8 @@ const App = ({
 												key={file.path}
 												className="galaxy-recentlyedited-file"
 												data-path={file.path}
-												onClick={() => {
-													const leaf =
-														obsidian?.workspace.getMostRecentLeaf();
-													if (file instanceof TFile) {
-														void leaf?.openFile(file);
-													}
-												}}
+												onClick={() => openInThisTab(obsidian, file)}
+												{...middleClick(() => openInNewTab(obsidian, file))}
 											>
 												<Icon name="file" />
 												<span className="galaxy-recentlyedited-file-name">
@@ -259,13 +253,8 @@ const App = ({
 												key={file.path}
 												className="galaxy-recentlyedited-file"
 												data-path={file.path}
-												onClick={() => {
-													const leaf =
-														obsidian?.workspace.getMostRecentLeaf();
-													if (file instanceof TFile) {
-														void leaf?.openFile(file);
-													}
-												}}
+												onClick={() => openInThisTab(obsidian, file)}
+												{...middleClick(() => openInNewTab(obsidian, file))}
 											>
 												<Icon name="file" />
 												<span className="galaxy-recentlyedited-file-name">

@@ -180,6 +180,17 @@ const Activity = ({
 									onOpenDay(cell.dataset.day as string);
 								}
 							}}
+							onMouseDown={(e) => {
+								if (e.button === 1) e.preventDefault();
+							}}
+							onAuxClick={(e) => {
+								if (e.button !== 1) return;
+								e.preventDefault();
+								const cell = dayOf(e.target);
+								if (cell && !cell.classList.contains("is-muted")) {
+									onOpenDay(cell.dataset.day as string);
+								}
+							}}
 						>
 							<div className="activity-months">
 								{weeks.map(
