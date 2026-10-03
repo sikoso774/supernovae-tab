@@ -26,10 +26,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   background once Obsidian is ready, without freezing the app, and follows every edit, rename and
   deletion of a note.
 
+- **Middle click (wheel click) opens a note in a new tab**, on the new tab (search results, the title and
+  the links of the preview, recent notes, bookmarks) and on the home dashboard (links, recent notes,
+  calendar squares). The press is cancelled on these items: over a scrolling list Windows would start
+  its scroll mode and the click would never arrive.
+- **The Home tab is pinned** as soon as it opens, and when the plugin starts for a dashboard restored
+  from the last session, so a note chosen from the file explorer opens in a new tab instead of replacing
+  it. Setting **Pin the Home tab** (on by default).
+
 ### Changed
 - While you search, the clock shrinks and the greeting, the recent notes and the quote step aside to
   give the results the room. Turning the built-in search off brings back the previous behavior: the bar
   opens the chosen search provider.
+- **Every note chosen on the home dashboard opens in a new tab**, directly. Before, it first replaced
+  the dashboard, which was then restored and the note moved to a new tab. The *Révision* button, which
+  runs a command, is unchanged.
 
 ## [1.5.0] - 2026-10-03
 
