@@ -17,8 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   that owns the command is not enabled.
 
 ### Changed
-- The clock on the home dashboard is much larger (about 140 px on a 1080p window); it still scales
-  with the window height so the whole dashboard keeps fitting on one screen.
+- The clock on the home dashboard is much larger (136 px at full size).
+- The home dashboard now **fits the window by scaling itself**: its natural height is measured and the
+  whole block is scaled down uniformly (down to 0.5) when the window is too small, so nothing is
+  cropped or hidden under Obsidian's status bar, whatever the window height, the open side panels or
+  the number of wrapped button rows. It only scrolls below that minimum. This replaces the sizes that
+  depended on the window height.
 
 ### Removed
 - The **Active projects** section of the home dashboard, to leave room for the larger clock. Notes
