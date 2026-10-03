@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-10-03
+
+### Changed
+- **New three-column layout for the home dashboard**, to use the space better:
+  main tabs, the clock with the greeting, and a date card on the top row; below, the link groups
+  (e.g. *Cursus MIAGE*) and the recent notes on the left, the streak and calendar in the middle, the
+  data card on the right. The galaxy background is untouched.
+- The date moved from under the clock to its own card (weekday, big day number, month and year); it
+  still follows the *Date language* setting.
+- **Link groups and recent notes are scrolling lists** (about three and a half rows visible, more when
+  the card has room), instead of rows of buttons and tiles.
+- The calendar is **compact: the last six months** (26 weeks) by default; the year tabs still show a
+  full year, scrolling horizontally. Its squares are sized from the width of their card.
+- The fit-to-window scaling now also considers the **width**: below 1200 px the three columns are
+  scaled down together instead of being squeezed, so the layout stays the same with side panels open.
+
+### Added
+- **DATA NERDS card**: a line chart of the notes created per month over twelve months and a donut of the
+  notes per domain (first sub-folder of the *Domains folder*, default `03 - CONTENTS`, the biggest six
+  plus "Autres"). Plain SVG, nothing extra to load; hover a point or a slice for its figures.
+- Settings **Show data panel** and **Domains folder**.
+
 ## [1.4.0] - 2026-10-03
 
 ### Added
