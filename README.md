@@ -19,8 +19,8 @@ Every new empty tab is replaced by the galaxy view:
 - **Date** — displayed below the clock
 - **Greeting** — personalized message with time-of-day and your name
 - **Full-text search** — type in the bar and the results show up in the tab itself, with a preview of the selected note and the matching words highlighted (see [Full-text search](#new-tab--full-text-search))
-- **Recent files** — your 5 most recently edited notes
-- **Bookmarks** — from all bookmarks or a specific group
+- **Recent files** — your 5 most recently edited notes (right click for the file menu, middle click for a new tab)
+- **Bookmarks** — from all bookmarks or a specific group, with the same right-click and middle-click actions
 - **Quote** — a random quote from the built-in list or your own custom quotes
 
 ![Supernovae Tab settings screenshot](screenshots/screenshot-settings.png)
@@ -97,6 +97,12 @@ All settings are available under **Settings → Supernovae Tab**.
 - [Omnisearch](https://github.com/scambier/obsidian-omnisearch)
 - [Another Quick Switcher](https://github.com/tadashi-aikawa/obsidian-another-quick-switcher)
 - [Quick Switcher++](https://github.com/darlal/obsidian-switcher-plus)
+
+---
+
+## New Tab — Right-click menu
+
+A right click on a recent note or a bookmark opens a menu that starts with **Open in new tab**, **Open to the right** and **Open in new window**, followed by what Obsidian and your plugins add to every file menu: *Bookmark…*, *Copy Obsidian URL*, *Reveal file in navigation*, *Open in default app*, and the entries your plugins add to file menus. *Rename* and *Delete* are not part of it: Obsidian adds them in the file explorer and the tab menu only.
 
 ---
 
