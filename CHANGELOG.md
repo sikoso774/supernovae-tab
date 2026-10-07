@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - 2026-10-07
+
+### Fixed
+- **The flashcards badge no longer differs from the Spaced Repetition status bar.** The badge used to count
+  the cards itself, from the `<!--SR:…-->` markers and the card syntax of each note, so it was off by one
+  whenever a card was not parsed the way the plugin parses it (a blank line cutting a card in two, a leftover
+  scheduling marker with no card above it). It now reads the count from Spaced Repetition itself (due +
+  new cards, the figure of its status bar) and follows it as it changes. The previous estimate is kept as a
+  fallback while the plugin is not ready or is disabled.
+
 ## [1.7.0] - 2026-10-03
 
 ### Added
