@@ -34,14 +34,15 @@ const flashcardNotes = (app: App): TFile[] =>
  * Scheduled review dates and new cards of every flashcard note. A note is read
  * again only when its modification time changes; the caller derives "due
  * today" from the dates, so the count stays right after midnight without any
- * re-read.
+ * re-read. This is only an estimate (Spaced Repetition's own count is read by
+ * `useSrCardCount`): with `enabled` false nothing is read or listened to.
  */
-const useDueCards = (app: App | undefined): DueCards => {
+const useDueCards = (app: App | undefined, enabled = true): DueCards => {
 	const [cards, setCards] = useState<DueCards>({ dates: [], fresh: 0 });
 	const cache = useRef(new Map<string, CachedNote>());
 
 	useEffect(() => {
-		if (!app) return;
+		if (!app || !enabled) return;
 		let timer: number | null = null;
 		let disposed = false;
 
@@ -103,7 +104,7 @@ const useDueCards = (app: App | undefined): DueCards => {
 			refs.forEach((ref) => app.vault.offref(ref));
 			metaRefs.forEach((ref) => app.metadataCache.offref(ref));
 		};
-	}, [app]);
+	}, [app, enabled]);
 
 	return cards;
 };
