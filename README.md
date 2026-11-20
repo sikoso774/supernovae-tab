@@ -36,7 +36,7 @@ Create a note named `Home.md` in your vault. Whenever you open it, Supernovae Ta
 - **Writing streak and calendar** — a big "days in a row" counter and a one-square-per-day calendar of the notes you created (hover for details, click to open the day's journal note)
 - **Link groups** — navigation links sharing a group are listed together in a scrolling card (e.g. *Cursus MIAGE*)
 - **Data card (DATA NERDS)** — notes created per month (line) and notes per domain (donut), from the sub-folders of a folder you choose
-- **Reviews band** — today's Spaced Repetition answers, the last 14 days, the weakest decks (click to review one) and the cards that keep failing, from the [SR Review Log](#home-dashboard--reviews-band) plugin
+- **Reviews band** — today's Spaced Repetition answers, the last 14 days, the weakest decks (click to review one) and the cards that keep failing, with a daily goal you can set on the fly, from the [SR Review Log](#home-dashboard--reviews-band) plugin
 - **Flashcards badge** — optional counter of Spaced Repetition cards to review (due or new) on a navigation button
 - **Tab protection** — the Home tab is pinned, and every note chosen in the dashboard (click or middle click) opens in a tab of its own, preserving the Home view; only a `command:` link, such as *Révision*, does not open a tab
 
@@ -149,7 +149,7 @@ A navigation link whose **path** starts with `command:` runs an Obsidian command
 
 ## Home Dashboard — Reviews band
 
-When the **SR Review Log** plugin (which journals every Spaced Repetition answer) is enabled, a band at the bottom of the Home page shows: today's answers against your daily goal, the last 14 days as bars stacked by answer (Easy / Good / Hard / Again), the decks with the lowest success rate over 30 days (click a deck to start its review) and the cards you fail most (click one to open its note at that line). The figures are computed by that plugin (`getStats()`), so nothing is parsed twice, and the band follows each answer live. Without the plugin the band is hidden. Turn it off with **Show reviews band** in the settings.
+When the **SR Review Log** plugin (which journals every Spaced Repetition answer) is enabled, a band at the bottom of the Home page shows: today's answers against your daily goal, the last 7, 14 or 30 days as bars stacked by answer (Easy / Good / Hard / Again), the decks with the lowest success rate over 30 days (click a deck to start its review) and the cards you fail most (click one to open its note at that line). The figures are computed by that plugin (`getStats()`), so nothing is parsed twice, and the band follows each answer live. Without the plugin the band is hidden. Click the ring to set the daily goal, the same every day or one per weekday; it is applied everywhere, past days included. Turn it off with **Show reviews band** in the settings.
 
 ---
 
