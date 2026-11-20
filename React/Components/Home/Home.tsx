@@ -15,10 +15,17 @@ import Activity from "./Activity";
 import DataNerds from "./DataNerds";
 import DateCard from "./DateCard";
 import DueBadge from "./DueBadge";
+import Reviews from "./Reviews";
 import useVaultFiles, {
 	getRecentMarkdownFiles,
 } from "React/Utils/useVaultFiles";
 import { middleClick, openInNewTab } from "React/Utils/openNote";
+import useReviewStats, {
+	openCardAt,
+	reviewDeck,
+	useOpenReviewStats,
+} from "React/Utils/reviewStats";
+import useToday from "React/Utils/useToday";
 
 interface NavRow {
 	group: string;
@@ -26,6 +33,7 @@ interface NavRow {
 }
 
 const COMMAND_PREFIX = "command:";
+const SR_REVIEW_COMMAND = "obsidian-spaced-repetition:srs-review-flashcards";
 
 // One row per group, in order of first appearance; links without a group share the main row
 const groupLinks = (links: NavLink[]): NavRow[] => {
@@ -61,6 +69,11 @@ const Home = ({
 	);
 	// Read once and shared by the streak card and the data card
 	const counts = useWritingActivity(obsidian);
+	const today = useToday();
+	// Answers journalled by the SR Review Log plugin; null while it is not there
+	const reviewStats = useReviewStats(obsidian, today);
+	const openReviewStats = useOpenReviewStats(obsidian);
+	const showReviews = settings.showReviews && reviewStats !== null;
 	const navRows = useMemo(
 		() => groupLinks(settings.homeNavLinks),
 		[settings.homeNavLinks]
@@ -130,7 +143,7 @@ const Home = ({
 			<div className="galaxy-wrapper home-wrapper">
 				<div className="home-fit" ref={fitRef}>
 					<div className="home-pad home-pad--top" />
-					<div className="home-grid">
+					<div className={`home-grid${showReviews ? " home-grid--reviews" : ""}`}>
 						{/* Onglets principaux */}
 						<div className="home-card home-tabs">
 							{mainLinks.map((link) => (
@@ -235,6 +248,17 @@ const Home = ({
 								</div>
 							</div>
 						</div>
+
+						{/* Révisions : réponses journalisées par SR Review Log */}
+						{showReviews && reviewStats && (
+							<Reviews
+								stats={reviewStats}
+								onOpenStats={openReviewStats}
+								onReview={() => plugin.openSwitcherCommand(SR_REVIEW_COMMAND)}
+								onReviewDeck={(path) => void reviewDeck(obsidian, path)}
+								onOpenCard={(card) => openCardAt(obsidian, card.file, card.line)}
+							/>
+						)}
 					</div>
 					<div className="home-pad home-pad--bottom" />
 				</div>

@@ -50,6 +50,7 @@ export interface TabGalaxyPluginSettings {
 	pinHomeTab: boolean;
 	showActivity: boolean;
 	showDataNerds: boolean;
+	showReviews: boolean;
 	domainsFolder: string;
 }
 
@@ -95,6 +96,7 @@ export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
 	pinHomeTab: true,
 	showActivity: true,
 	showDataNerds: true,
+	showReviews: true,
 	domainsFolder: "03 - CONTENTS",
 };
 
@@ -486,6 +488,19 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.setValue(this.plugin.settings.showDataNerds);
 				component.onChange((value) => {
 					this.plugin.settings.showDataNerds = value;
+					this.plugin.updateSettings();
+				});
+			});
+
+		new Setting(containerEl)
+			.setName("Show reviews band")
+			.setDesc(
+				`Band at the bottom of the home page with today's flashcard answers, the last two weeks, the weakest decks and the tricky cards. Needs the SR Review Log plugin; hidden without it.`
+			)
+			.addToggle((component) => {
+				component.setValue(this.plugin.settings.showReviews);
+				component.onChange((value) => {
+					this.plugin.settings.showReviews = value;
 					this.plugin.updateSettings();
 				});
 			});
