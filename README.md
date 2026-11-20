@@ -36,6 +36,7 @@ Create a note named `Home.md` in your vault. Whenever you open it, Supernovae Ta
 - **Writing streak and calendar** — a big "days in a row" counter and a one-square-per-day calendar of the notes you created (hover for details, click to open the day's journal note)
 - **Link groups** — navigation links sharing a group are listed together in a scrolling card (e.g. *Cursus MIAGE*)
 - **Data card (DATA NERDS)** — notes created per month (line) and notes per domain (donut), from the sub-folders of a folder you choose
+- **Reviews band** — today's Spaced Repetition answers, the last 14 days, the weakest decks (click to review one) and the cards that keep failing, from the [SR Review Log](#home-dashboard--reviews-band) plugin
 - **Flashcards badge** — optional counter of Spaced Repetition cards to review (due or new) on a navigation button
 - **Tab protection** — the Home tab is pinned, and every note chosen in the dashboard (click or middle click) opens in a tab of its own, preserving the Home view; only a `command:` link, such as *Révision*, does not open a tab
 
@@ -143,6 +144,12 @@ Hover a point or a slice for its figures. Turn the card off with **Settings → 
 ## Home Dashboard — Command links
 
 A navigation link whose **path** starts with `command:` runs an Obsidian command instead of opening a note. A command id has the form `plugin-id:command-id` (list them in the developer console with `Object.keys(app.commands.commands)`), for example `command:obsidian-spaced-repetition:srs-review-flashcards` to open the Spaced Repetition deck dialog. If the plugin that owns the command is disabled, a notice says so.
+
+---
+
+## Home Dashboard — Reviews band
+
+When the **SR Review Log** plugin (which journals every Spaced Repetition answer) is enabled, a band at the bottom of the Home page shows: today's answers against your daily goal, the last 14 days as bars stacked by answer (Easy / Good / Hard / Again), the decks with the lowest success rate over 30 days (click a deck to start its review) and the cards you fail most (click one to open its note at that line). The figures are computed by that plugin (`getStats()`), so nothing is parsed twice, and the band follows each answer live. Without the plugin the band is hidden. Turn it off with **Show reviews band** in the settings.
 
 ---
 
