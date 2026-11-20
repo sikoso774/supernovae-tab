@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-11-20
+
+### Added
+- **Reviews band on the Home page.** A new card under the calendar and the data card shows what you
+  answered in Spaced Repetition, in four blocks: today (a ring towards your daily goal, the Again / Hard /
+  Good / Easy counts, 30-day success rate, review streak, new cards), the last 14 days (bars stacked by
+  answer, with the goal line), the decks you succeed at least (click one to start its review) and the cards
+  that keep failing (click one to open its note at the right line). *Review* and *Stats* buttons open the
+  Spaced Repetition dialog and the statistics view. The figures come from the **SR Review Log** plugin
+  (`getStats()`), which journals every answer; without it the band is hidden and the Home page is unchanged.
+  It follows each answer live. On a narrow tab its blocks scroll inside the band instead of overlapping.
+- **Setting *Show reviews band*** (on by default).
+
+### Changed
+- With the band, the Home grid gives the bottom row of the two right-hand columns to the band: *Recent*
+  moves to the bottom left, the calendar and the data card keep the middle row.
+
 ## [1.7.1] - 2026-10-07
 
 ### Fixed
