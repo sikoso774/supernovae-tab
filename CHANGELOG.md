@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2026-11-20
+
+### Added
+- **Set your daily goal from the Home page.** Click the ring (or *objectif N ✎*) in the Reviews band to open a
+  small panel: one goal for every day (− / + by 5, a typed number, 20 / 30 / 50 shortcuts) or a different goal
+  per weekday (Mon to Sun, today highlighted). The goal is stored by **SR Review Log** and applies everywhere,
+  past days included: the ring, the bars, the heatmap and its own *Review Stats* view. With goals that differ
+  per weekday, the bar chart shows a tick per column instead of a single line.
+- **Choose the length of the bar chart: 7, 14 or 30 days**, next to its title (one day number in five is shown
+  beyond 14 days).
+
+### Changed
+- Needs the matching **SR Review Log** update (`setSettings()`, `goalFor()`; `getStats()` now reports the
+  settings and the goal of each day). With an older SR Review Log the band keeps working but the goal cannot
+  be changed from the Home page.
+
 ## [1.8.0] - 2026-11-20
 
 ### Added
