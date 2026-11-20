@@ -16,6 +16,8 @@ const SR_REVIEW_COMMAND = "obsidian-spaced-repetition:srs-review-flashcards";
 
 export interface ReviewDay {
 	d: string;
+	/** Goal that applied to that day (it can differ per weekday). */
+	goal: number;
 	total: number;
 	easy: number;
 	good: number;
@@ -45,10 +47,20 @@ export interface TrickyCard {
 	hard: number;
 }
 
+/** Settings of the log plugin that the band lets the user change. */
+export interface ReviewSettings {
+	dailyGoal: number;
+	/** `null`: the same goal every day; else 7 goals, Sunday first. */
+	goalByWeekday: number[] | null;
+	/** Days drawn in the bar chart: 7, 14 or 30. */
+	barsDays: number;
+}
+
 export interface ReviewStats {
 	version: number;
 	today: string;
 	goal: number;
+	settings: ReviewSettings;
 	total: number;
 	todayStats: {
 		total: number;
@@ -68,6 +80,7 @@ export interface ReviewStats {
 
 interface LogPlugin {
 	getStats?: (opts?: { days?: number }) => Promise<ReviewStats>;
+	setSettings?: (patch: Partial<ReviewSettings>) => Promise<void>;
 }
 
 interface AppLike {
@@ -118,7 +131,7 @@ const useReviewStats = (app: App | undefined, today: string): ReviewStats | null
 				);
 			}
 			try {
-				const next = await plugin.getStats?.({ days: 14 });
+				const next = await plugin.getStats?.();
 				if (alive && next) setStats(next);
 			} catch (e) {
 				console.warn("[supernovae-tab] review stats", e);
@@ -140,6 +153,21 @@ const useReviewStats = (app: App | undefined, today: string): ReviewStats | null
 };
 
 export default useReviewStats;
+
+/**
+ * Changes the goal or the chart length in the log plugin, which validates and
+ * saves them, then announces the update (the band redraws itself from that event).
+ * Resolves `false` when the plugin is too old to accept settings.
+ */
+export const setReviewSettings = async (
+	app: App | undefined,
+	patch: Partial<ReviewSettings>
+): Promise<boolean> => {
+	const plugin = app ? logPlugin(app) : null;
+	if (!plugin?.setSettings) return false;
+	await plugin.setSettings(patch);
+	return true;
+};
 
 /** Opens the plugin's "Review Stats" view (a new tab, or the one that exists). */
 export const useOpenReviewStats = (app: App | undefined) =>

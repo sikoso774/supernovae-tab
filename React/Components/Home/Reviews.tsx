@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import Icon from "../Icon/Icon";
-import { ReviewStats, TrickyCard } from "React/Utils/reviewStats";
+import GoalMenu from "./GoalMenu";
+import { ReviewSettings, ReviewStats, TrickyCard } from "React/Utils/reviewStats";
 
 const RING_R = 40;
 const RING_STROKE = 9;
 const RING_LENGTH = 2 * Math.PI * RING_R;
+
+const BARS_CHOICES = [7, 14, 30];
+// Beyond a fortnight the day numbers get crowded: label one day in five
+const LABEL_EVERY = 5;
 
 // Top to bottom in a bar, and in the legend order
 const RESPONSES = [
@@ -40,6 +45,8 @@ interface Props {
 	onReview: () => void;
 	onReviewDeck: (path: string) => void;
 	onOpenCard: (card: TrickyCard) => void;
+	/** Changes the goal or the chart length (stored by the log plugin). */
+	onSettings: (patch: Partial<ReviewSettings>) => void;
 }
 
 /**
@@ -47,11 +54,24 @@ interface Props {
  * fortnight, per deck and the cards that keep failing. The figures come from the
  * SR Review Log plugin; plain HTML and SVG, no chart library.
  */
-const Reviews = ({ stats, onOpenStats, onReview, onReviewDeck, onOpenCard }: Props) => {
+const Reviews = ({
+	stats,
+	onOpenStats,
+	onReview,
+	onReviewDeck,
+	onOpenCard,
+	onSettings,
+}: Props) => {
 	const { todayStats: today, goal } = stats;
+	const [goalMenu, setGoalMenu] = useState(false);
+	const closeGoalMenu = useCallback(() => setGoalMenu(false), []);
+	const toggleGoalMenu = () => setGoalMenu((open) => !open);
 	const done = today.total >= goal;
 	const ratio = Math.min(1, today.total / goal);
-	const scaleMax = Math.max(goal, ...stats.days.map((d) => d.total));
+	const goals = stats.days.map((d) => d.goal ?? goal);
+	const sameGoal = goals.every((g) => g === goals[0]);
+	const scaleMax = Math.max(goal, ...goals, ...stats.days.map((d) => d.total));
+	const todayDow = parseDay(stats.today).getDay();
 	const decks = stats.decks.slice(0, 5);
 	const tricky = stats.tricky.slice(0, 4);
 
@@ -78,11 +98,23 @@ const Reviews = ({ stats, onOpenStats, onReview, onReviewDeck, onOpenCard }: Pro
 				<div className="rev-cols">
 					{/* Aujourd'hui */}
 					<section className="rev-col rev-today">
-						<div className="rev-caption">Aujourd'hui</div>
+						<div className="rev-caption">
+							<span>Aujourd'hui</span>
+							<a
+								className="rev-hint rev-goal-edit"
+								data-rev-goal-trigger=""
+								onClick={toggleGoalMenu}
+								title="Régler l'objectif quotidien"
+							>
+								objectif {goal} ✎
+							</a>
+						</div>
 						<div className="rev-today-main">
 							<div
 								className={`rev-ring${done ? " is-done" : ""}`}
-								title={`${today.total} réponse${today.total > 1 ? "s" : ""} sur un objectif de ${goal}`}
+								data-rev-goal-trigger=""
+								onClick={toggleGoalMenu}
+								title={`${today.total} réponse${today.total > 1 ? "s" : ""} sur un objectif de ${goal}\nClic : régler l'objectif`}
 							>
 								<svg viewBox="0 0 100 100" role="img" aria-label="Objectif du jour">
 									<circle
@@ -137,21 +169,37 @@ const Reviews = ({ stats, onOpenStats, onReview, onReviewDeck, onOpenCard }: Pro
 					<section className="rev-col rev-days">
 						<div className="rev-caption">
 							<span>{stats.days.length} derniers jours</span>
-							<span className="rev-hint">objectif {goal}</span>
+							<span className="rev-range" title="Nombre de jours affichés">
+								{BARS_CHOICES.map((n) => (
+									<a
+										key={n}
+										className={n === stats.days.length ? "is-on" : ""}
+										onClick={() => onSettings({ barsDays: n })}
+									>
+										{n}
+									</a>
+								))}
+							</span>
 						</div>
 						<div className="rev-bars">
-							<div
-								className="rev-goal-line"
-								style={{ "--rev-goal": goal / scaleMax } as React.CSSProperties}
-							/>
-							{stats.days.map((day) => {
+							{sameGoal && (
+								<div
+									className="rev-goal-line"
+									style={{ "--rev-goal": goal / scaleMax } as React.CSSProperties}
+								/>
+							)}
+							{stats.days.map((day, index) => {
+								const dayGoal = day.goal ?? goal;
+								const showLabel =
+									stats.days.length <= 14 ||
+									(stats.days.length - 1 - index) % LABEL_EVERY === 0;
 								const rate = day.total
 									? Math.round((100 * (day.good + day.easy)) / day.total)
 									: null;
 								const tip =
 									day.total === 0
-										? `${longDay(day.d)} — aucune révision`
-										: `${longDay(day.d)} — ${day.total} réponse${day.total > 1 ? "s" : ""} (${rate} %) · Easy ${day.easy} · Good ${day.good} · Hard ${day.hard} · Again ${day.again}`;
+										? `${longDay(day.d)} — aucune révision · objectif ${dayGoal}`
+										: `${longDay(day.d)} — ${day.total} réponse${day.total > 1 ? "s" : ""} sur ${dayGoal} (${rate} %) · Easy ${day.easy} · Good ${day.good} · Hard ${day.hard} · Again ${day.again}`;
 								return (
 									<div
 										key={day.d}
@@ -160,9 +208,15 @@ const Reviews = ({ stats, onOpenStats, onReview, onReviewDeck, onOpenCard }: Pro
 										onClick={onOpenStats}
 									>
 										<div className="rev-bar-plot">
+											{!sameGoal && (
+												<div
+													className="rev-goal-tick"
+													style={{ bottom: `${(100 * dayGoal) / scaleMax}%` }}
+												/>
+											)}
 											{day.total > 0 && (
 												<div
-													className={`rev-bar${day.total >= goal ? " is-goal" : ""}`}
+													className={`rev-bar${day.total >= dayGoal ? " is-goal" : ""}`}
 													style={{ height: `${(100 * day.total) / scaleMax}%` }}
 												>
 													{RESPONSES.map(({ key }) =>
@@ -177,7 +231,9 @@ const Reviews = ({ stats, onOpenStats, onReview, onReviewDeck, onOpenCard }: Pro
 												</div>
 											)}
 										</div>
-										<div className="rev-bar-label">{parseDay(day.d).getDate()}</div>
+										<div className="rev-bar-label">
+											{showLabel || day.d === stats.today ? parseDay(day.d).getDate() : ""}
+										</div>
 									</div>
 								);
 							})}
@@ -247,6 +303,15 @@ const Reviews = ({ stats, onOpenStats, onReview, onReviewDeck, onOpenCard }: Pro
 						)}
 					</section>
 				</div>
+			)}
+
+			{goalMenu && stats.total > 0 && (
+				<GoalMenu
+					settings={stats.settings}
+					todayDow={todayDow}
+					onChange={onSettings}
+					onClose={closeGoalMenu}
+				/>
 			)}
 		</div>
 	);

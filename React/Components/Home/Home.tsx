@@ -23,6 +23,7 @@ import { middleClick, openInNewTab } from "React/Utils/openNote";
 import useReviewStats, {
 	openCardAt,
 	reviewDeck,
+	setReviewSettings,
 	useOpenReviewStats,
 } from "React/Utils/reviewStats";
 import useToday from "React/Utils/useToday";
@@ -257,6 +258,7 @@ const Home = ({
 								onReview={() => plugin.openSwitcherCommand(SR_REVIEW_COMMAND)}
 								onReviewDeck={(path) => void reviewDeck(obsidian, path)}
 								onOpenCard={(card) => openCardAt(obsidian, card.file, card.line)}
+								onSettings={(patch) => void setReviewSettings(obsidian, patch)}
 							/>
 						)}
 					</div>
