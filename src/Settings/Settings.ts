@@ -12,6 +12,9 @@ import {
 } from "src/Types/Enums";
 import { CustomQuote, NavLink, SearchProvider } from "src/Types/Interfaces";
 
+/** Source of the line in the data card of the home page. */
+export type DATA_CURVE = "notes" | "reviews";
+
 const DEFAULT_SEARCH_PROVIDER: SearchProvider = {
 	command: "switcher:open",
 	display: "Obsidian Core Quick Switcher",
@@ -51,6 +54,15 @@ export interface TabGalaxyPluginSettings {
 	showActivity: boolean;
 	showDataNerds: boolean;
 	showReviews: boolean;
+	showHomeRecent: boolean;
+	showHomeNav: boolean;
+	showHomeClock: boolean;
+	showHomeDate: boolean;
+	showHomeGroups: boolean;
+	dailyNoteFolder: string;
+	dailyNoteTemplate: string;
+	/** What the line of the data card shows. */
+	dataCurve: DATA_CURVE;
 	domainsFolder: string;
 }
 
@@ -97,6 +109,14 @@ export const DEFAULT_SETTINGS: TabGalaxyPluginSettings = {
 	showActivity: true,
 	showDataNerds: true,
 	showReviews: true,
+	showHomeRecent: true,
+	showHomeNav: true,
+	showHomeClock: true,
+	showHomeDate: true,
+	showHomeGroups: true,
+	dailyNoteFolder: "05 - Journaling/{{YYYY}}",
+	dailyNoteTemplate: "06 - Templates/Journal - Galaxy",
+	dataCurve: "notes",
 	domainsFolder: "03 - CONTENTS",
 };
 
@@ -466,6 +486,39 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				});
 			});
 
+		const homeToggle = (
+			name: string,
+			desc: string,
+			key: "showHomeNav" | "showHomeClock" | "showHomeDate" | "showHomeGroups"
+		) =>
+			new Setting(containerEl)
+				.setName(name)
+				.setDesc(desc)
+				.addToggle((component) => {
+					component.setValue(this.plugin.settings[key]);
+					component.onChange((value) => {
+						this.plugin.settings[key] = value;
+						this.plugin.updateSettings();
+					});
+				});
+
+		homeToggle(
+			"Show navigation buttons",
+			`The buttons of the navigation links that have no group (Journal, Révision, Hub…). Hidden when there are none.`,
+			"showHomeNav"
+		);
+		homeToggle(
+			"Show clock and greeting",
+			`The big clock and the greeting under it on the home dashboard (the "Show time" and "Show greeting" options above are for the new tab).`,
+			"showHomeClock"
+		);
+		homeToggle("Show date card", `The card with the day and the month, top right.`, "showHomeDate");
+		homeToggle(
+			"Show link groups",
+			`The scrolling lists made of the navigation links that have a group (e.g. Cursus MIAGE). Hidden when there are none.`,
+			"showHomeGroups"
+		);
+
 		new Setting(containerEl)
 			.setName("Show writing activity")
 			.setDesc(
@@ -493,6 +546,32 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
+			.setName("Data panel curve")
+			.setDesc(
+				`What the line of the data panel shows: the notes created per month, or the flashcard answers per day (7, 14 or 30 days, with your daily goal; click it to change the goal). The review curve needs the SR Review Log plugin; without it the notes curve is shown.`
+			)
+			.addDropdown((component) => {
+				component.addOption("notes", "Notes created per month");
+				component.addOption("reviews", "Review answers per day");
+				component.setValue(this.plugin.settings.dataCurve);
+				component.onChange((value: DATA_CURVE) => {
+					this.plugin.settings.dataCurve = value;
+					this.plugin.updateSettings();
+				});
+			});
+
+		new Setting(containerEl)
+			.setName("Show recent notes")
+			.setDesc(`List of the most recently modified notes on the home page.`)
+			.addToggle((component) => {
+				component.setValue(this.plugin.settings.showHomeRecent);
+				component.onChange((value) => {
+					this.plugin.settings.showHomeRecent = value;
+					this.plugin.updateSettings();
+				});
+			});
+
+		new Setting(containerEl)
 			.setName("Show reviews band")
 			.setDesc(
 				`Band at the bottom of the home page with today's flashcard answers, the last two weeks, the weakest decks and the tricky cards. Needs the SR Review Log plugin; hidden without it.`
@@ -501,6 +580,34 @@ export class TabGalaxyPluginSettingTab extends PluginSettingTab {
 				component.setValue(this.plugin.settings.showReviews);
 				component.onChange((value) => {
 					this.plugin.settings.showReviews = value;
+					this.plugin.updateSettings();
+				});
+			});
+
+		new Setting(containerEl)
+			.setName("Daily note folder")
+			.setDesc(
+				`Where a missing daily note is created when you click the date card or the {{today}} link. {{YYYY}}, {{MM}} and {{DD}} are replaced by the day, so "05 - Journaling/{{YYYY}}" follows the year.`
+			)
+			.addText((component) => {
+				component.setPlaceholder("05 - Journaling/{{YYYY}}");
+				component.setValue(this.plugin.settings.dailyNoteFolder);
+				component.onChange((value) => {
+					this.plugin.settings.dailyNoteFolder = value.trim();
+					this.plugin.updateSettings();
+				});
+			});
+
+		new Setting(containerEl)
+			.setName("Daily note template")
+			.setDesc(
+				`Templater template used to create a missing daily note (path in the vault, with or without .md). Without Templater, or if the template is not found, an empty note is created and a message tells why.`
+			)
+			.addText((component) => {
+				component.setPlaceholder("06 - Templates/Journal - Galaxy");
+				component.setValue(this.plugin.settings.dailyNoteTemplate);
+				component.onChange((value) => {
+					this.plugin.settings.dailyNoteTemplate = value.trim();
 					this.plugin.updateSettings();
 				});
 			});

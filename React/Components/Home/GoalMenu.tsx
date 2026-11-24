@@ -95,6 +95,8 @@ interface Props {
 	todayDow: number;
 	onChange: (patch: Partial<ReviewSettings>) => void;
 	onClose: () => void;
+	/** Extra class to place the panel in another card. */
+	className?: string;
 }
 
 /**
@@ -102,7 +104,13 @@ interface Props {
  * day, or one per weekday. The log plugin stores it and every figure follows
  * (ring, bar chart, heatmap and its own Stats view).
  */
-const GoalMenu = ({ settings: saved, todayDow, onChange: save, onClose }: Props) => {
+const GoalMenu = ({
+	settings: saved,
+	todayDow,
+	onChange: save,
+	onClose,
+	className,
+}: Props) => {
 	const ref = useRef<HTMLDivElement>(null);
 
 	// The menu is the only writer while it is open, so it keeps the latest values
@@ -160,7 +168,12 @@ const GoalMenu = ({ settings: saved, todayDow, onChange: save, onClose }: Props)
 	};
 
 	return (
-		<div className="rev-goal-pop" ref={ref} role="dialog" aria-label="Objectif quotidien">
+		<div
+			className={`rev-goal-pop${className ? ` ${className}` : ""}`}
+			ref={ref}
+			role="dialog"
+			aria-label="Objectif quotidien"
+		>
 			<div className="rev-pop-head">
 				<span>Objectif quotidien</span>
 				<a

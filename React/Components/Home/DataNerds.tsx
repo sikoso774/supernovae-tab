@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useObsidian } from "../../Context/ObsidianAppContext";
 import { DayCounts } from "React/Utils/activity";
 import {
@@ -9,6 +9,8 @@ import {
 	monthlyTotals,
 } from "React/Utils/dataStats";
 import useDomainCounts from "React/Utils/useDomainCounts";
+import { ReviewSettings, ReviewStats } from "React/Utils/reviewStats";
+import GoalMenu from "./GoalMenu";
 import useToday from "React/Utils/useToday";
 
 const LINE_W = 300;
@@ -36,12 +38,162 @@ const monthTitle = (key: string): string => {
 
 const plural = (n: number): string => (n > 1 ? "notes" : "note");
 
+const BARS_CHOICES = [7, 14, 30];
+
+const parseDay = (key: string): Date => {
+	const [y, m, d] = key.split("-").map(Number);
+	return new Date(y, m - 1, d, 12);
+};
+
+const longDay = (key: string): string =>
+	parseDay(key).toLocaleDateString("fr-FR", {
+		weekday: "long",
+		day: "numeric",
+		month: "long",
+	});
+
+/** What the review curve needs from the Home page. */
+export interface ReviewCurveProps {
+	stats: ReviewStats;
+	onSettings: (patch: Partial<ReviewSettings>) => void;
+}
+
+/**
+ * Answers given in Spaced Repetition, one point per day over the chosen period
+ * (7, 14 or 30 days), with the daily goal as a dashed line. Same drawing as the
+ * notes curve; the figures come from the SR Review Log plugin.
+ */
+const ReviewCurve = ({
+	stats,
+	onSettings,
+	onEditGoal,
+}: ReviewCurveProps & { onEditGoal: () => void }) => {
+	const days = stats.days;
+	const totals = days.map((d) => d.total);
+	const goals = days.map((d) => d.goal ?? stats.goal);
+	const sum = totals.reduce((a, b) => a + b, 0);
+	const top = Math.max(1, ...totals, ...goals);
+
+	const chartH = LINE_H - LABEL_BAND;
+	const xs = linePoints(totals, LINE_W, chartH, LINE_PAD).map((p) => p.x);
+	const yOf = (v: number) => LINE_PAD + (chartH - LINE_PAD * 2) * (1 - v / top);
+	const points = totals.map((v, i) => ({ x: xs[i], y: yOf(v) }));
+	const goalPoints = goals.map((g, i) => ({ x: xs[i], y: yOf(g) }));
+	// Label from the right so today is always shown and the spacing stays even
+	const step = days.length <= 7 ? 1 : days.length <= 14 ? 3 : 7;
+
+	return (
+		<div className="data-block">
+			<div className="data-caption">
+				<span>Révisions par jour</span>
+				<span className="data-figure">{sum}</span>
+			</div>
+			<div className="data-sub">
+				<span className="rev-range" title="Nombre de jours affichés">
+					{BARS_CHOICES.map((n) => (
+						<a
+							key={n}
+							className={n === days.length ? "is-on" : ""}
+							onClick={() => onSettings({ barsDays: n })}
+						>
+							{n} j
+						</a>
+					))}
+				</span>
+				<a
+					className="rev-hint rev-goal-edit"
+					data-rev-goal-trigger=""
+					onClick={onEditGoal}
+					title="Régler l'objectif quotidien"
+				>
+					objectif {stats.goal} ✎
+				</a>
+			</div>
+			{stats.total === 0 ? (
+				<div className="data-empty">
+					Fais une session de flashcards : chaque réponse apparaîtra ici.
+				</div>
+			) : (
+				<svg
+					className="data-line is-clickable"
+					viewBox={`0 0 ${LINE_W} ${LINE_H}`}
+					role="img"
+					aria-label={`Réponses de révision par jour sur ${days.length} jours`}
+					data-rev-goal-trigger=""
+					onClick={onEditGoal}
+				>
+					<defs>
+						<linearGradient id="data-area-fill-rev" x1="0" y1="0" x2="0" y2="1">
+							<stop offset="0%" stopColor="#5b8cff" stopOpacity="0.55" />
+							<stop offset="100%" stopColor="#5b8cff" stopOpacity="0" />
+						</linearGradient>
+					</defs>
+					{[0, 0.5, 1].map((ratio) => (
+						<line
+							key={ratio}
+							className="data-grid"
+							x1={LINE_PAD}
+							x2={LINE_W - LINE_PAD}
+							y1={LINE_PAD + (chartH - LINE_PAD * 2) * ratio}
+							y2={LINE_PAD + (chartH - LINE_PAD * 2) * ratio}
+						/>
+					))}
+					<path
+						className="data-area data-area--rev"
+						d={areaPath(points, chartH - LINE_PAD)}
+					/>
+					<path className="data-goal" d={linePath(goalPoints)} />
+					<path className="data-stroke" d={linePath(points)} />
+					{points.map((p, i) => (
+						<circle
+							key={days[i].d}
+							className={`data-dot${totals[i] >= goals[i] && totals[i] > 0 ? " is-goal" : ""}`}
+							cx={p.x}
+							cy={p.y}
+							r={i === points.length - 1 ? 3.6 : days.length > 14 ? 1.8 : 2.4}
+						>
+							<title>{`${longDay(days[i].d)} — ${totals[i]} réponse${totals[i] > 1 ? "s" : ""} sur ${goals[i]}`}</title>
+						</circle>
+					))}
+					{points.map((p, i) =>
+						(points.length - 1 - i) % step === 0 ? (
+							<text
+								key={`l-${days[i].d}`}
+								className="data-axis"
+								x={p.x}
+								y={LINE_H - 3}
+								textAnchor={i === 0 ? "start" : i === points.length - 1 ? "end" : "middle"}
+							>
+								{parseDay(days[i].d).getDate()}
+							</text>
+						) : null
+					)}
+					<text className="data-axis" x={LINE_PAD} y={LINE_PAD - 1} textAnchor="start">
+						max {top}
+					</text>
+				</svg>
+			)}
+		</div>
+	);
+};
+
 /**
  * "DATA NERDS" card: notes created per month (line) and notes per domain
  * (donut). Plain SVG, no chart library; all numbers come from the metadata
  * cache and the file list, no file is read.
  */
-const DataNerds = ({ counts, root }: { counts: DayCounts; root: string }) => {
+const DataNerds = ({
+	counts,
+	root,
+	reviews,
+}: {
+	counts: DayCounts;
+	root: string;
+	/** When given, the line shows the review answers instead of the notes created. */
+	reviews?: ReviewCurveProps | null;
+}) => {
+	const [goalMenu, setGoalMenu] = useState(false);
+	const closeGoalMenu = useCallback(() => setGoalMenu(false), []);
 	const obsidian = useObsidian();
 	const today = useToday();
 	const domains = useDomainCounts(obsidian, root);
@@ -74,64 +226,82 @@ const DataNerds = ({ counts, root }: { counts: DayCounts; root: string }) => {
 		<div className="home-card home-data">
 			<div className="home-card-title">DATA NERDS</div>
 
-			<div className="data-block">
-				<div className="data-caption">
-					<span>Notes créées par mois</span>
-					<span className="data-figure">{monthTotal}</span>
-				</div>
-				<svg
-					className="data-line"
-					viewBox={`0 0 ${LINE_W} ${LINE_H}`}
-					role="img"
-					aria-label="Notes créées par mois sur douze mois"
-				>
-					<defs>
-						<linearGradient id="data-area-fill" x1="0" y1="0" x2="0" y2="1">
-							<stop offset="0%" stopColor="#5b8cff" stopOpacity="0.55" />
-							<stop offset="100%" stopColor="#5b8cff" stopOpacity="0" />
-						</linearGradient>
-					</defs>
-					{[0, 0.5, 1].map((ratio) => (
-						<line
-							key={ratio}
-							className="data-grid"
-							x1={LINE_PAD}
-							x2={LINE_W - LINE_PAD}
-							y1={LINE_PAD + (chartH - LINE_PAD * 2) * ratio}
-							y2={LINE_PAD + (chartH - LINE_PAD * 2) * ratio}
-						/>
-					))}
-					<path className="data-area" d={areaPath(points, chartH - LINE_PAD)} />
-					<path className="data-stroke" d={linePath(points)} />
-					{points.map((p, i) => (
-						<circle
-							key={months[i].month}
-							className="data-dot"
-							cx={p.x}
-							cy={p.y}
-							r={i === points.length - 1 ? 3.6 : 2.4}
-						>
-							<title>{`${monthTitle(months[i].month)} — ${months[i].total} ${plural(months[i].total)}`}</title>
-						</circle>
-					))}
-					{points.map((p, i) =>
-						i % 3 === 0 || i === points.length - 1 ? (
-							<text
-								key={`l-${months[i].month}`}
-								className="data-axis"
-								x={p.x}
-								y={LINE_H - 3}
-								textAnchor={i === 0 ? "start" : i === points.length - 1 ? "end" : "middle"}
+			{reviews && (
+				<ReviewCurve
+					{...reviews}
+					onEditGoal={() => setGoalMenu((open) => !open)}
+				/>
+			)}
+			{reviews && goalMenu && (
+				<GoalMenu
+					className="rev-goal-pop--end"
+					settings={reviews.stats.settings}
+					todayDow={parseDay(reviews.stats.today).getDay()}
+					onChange={reviews.onSettings}
+					onClose={closeGoalMenu}
+				/>
+			)}
+
+			{!reviews && (
+				<div className="data-block">
+					<div className="data-caption">
+						<span>Notes créées par mois</span>
+						<span className="data-figure">{monthTotal}</span>
+					</div>
+					<svg
+						className="data-line"
+						viewBox={`0 0 ${LINE_W} ${LINE_H}`}
+						role="img"
+						aria-label="Notes créées par mois sur douze mois"
+					>
+						<defs>
+							<linearGradient id="data-area-fill" x1="0" y1="0" x2="0" y2="1">
+								<stop offset="0%" stopColor="#5b8cff" stopOpacity="0.55" />
+								<stop offset="100%" stopColor="#5b8cff" stopOpacity="0" />
+							</linearGradient>
+						</defs>
+						{[0, 0.5, 1].map((ratio) => (
+							<line
+								key={ratio}
+								className="data-grid"
+								x1={LINE_PAD}
+								x2={LINE_W - LINE_PAD}
+								y1={LINE_PAD + (chartH - LINE_PAD * 2) * ratio}
+								y2={LINE_PAD + (chartH - LINE_PAD * 2) * ratio}
+							/>
+						))}
+						<path className="data-area" d={areaPath(points, chartH - LINE_PAD)} />
+						<path className="data-stroke" d={linePath(points)} />
+						{points.map((p, i) => (
+							<circle
+								key={months[i].month}
+								className="data-dot"
+								cx={p.x}
+								cy={p.y}
+								r={i === points.length - 1 ? 3.6 : 2.4}
 							>
-								{months[i].label}
-							</text>
-						) : null
-					)}
-					<text className="data-axis" x={LINE_PAD} y={LINE_PAD - 1} textAnchor="start">
-						max {peak}
-					</text>
-				</svg>
-			</div>
+								<title>{`${monthTitle(months[i].month)} — ${months[i].total} ${plural(months[i].total)}`}</title>
+							</circle>
+						))}
+						{points.map((p, i) =>
+							i % 3 === 0 || i === points.length - 1 ? (
+								<text
+									key={`l-${months[i].month}`}
+									className="data-axis"
+									x={p.x}
+									y={LINE_H - 3}
+									textAnchor={i === 0 ? "start" : i === points.length - 1 ? "end" : "middle"}
+								>
+									{months[i].label}
+								</text>
+							) : null
+						)}
+						<text className="data-axis" x={LINE_PAD} y={LINE_PAD - 1} textAnchor="start">
+							max {peak}
+						</text>
+					</svg>
+				</div>
+			)}
 
 			<div className="data-block">
 				<div className="data-caption">
