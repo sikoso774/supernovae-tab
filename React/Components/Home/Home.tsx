@@ -27,6 +27,8 @@ import useReviewStats, {
 	useOpenReviewStats,
 } from "React/Utils/reviewStats";
 import useToday from "React/Utils/useToday";
+import { buildHomeLayout } from "React/Utils/homeLayout";
+import { openDailyNote } from "React/Utils/dailyNote";
 
 interface NavRow {
 	group: string;
@@ -82,6 +84,20 @@ const Home = ({
 	const mainLinks = navRows.find((row) => row.group === "")?.links ?? [];
 	const groupRows = navRows.filter((row) => row.group !== "");
 
+	// Each block has its own setting; the grid is rebuilt for the ones shown
+	const showTabs = settings.showHomeNav && mainLinks.length > 0;
+	const showGroups = settings.showHomeGroups && groupRows.length > 0;
+	const layout = buildHomeLayout({
+		tabs: showTabs,
+		clock: settings.showHomeClock,
+		date: settings.showHomeDate,
+		groups: showGroups,
+		recent: settings.showHomeRecent,
+		activity: settings.showActivity,
+		data: settings.showDataNerds,
+		reviews: showReviews,
+	});
+
 	const resolvePath = (path: string) =>
 		path === "{{today}}" ? moment().format("YYYY-MM-DD") : path;
 
@@ -97,7 +113,14 @@ const Home = ({
 		}
 	};
 
+	const openToday = () => void openDailyNote(obsidian, settings, today);
+
 	const openFile = (path: string) => {
+		// The daily note is created from the Templater template when it is missing
+		if (path === "{{today}}") {
+			openToday();
+			return;
+		}
 		const resolved = resolvePath(path);
 		const file =
 			obsidian?.metadataCache.getFirstLinkpathDest(resolved, "") ??
@@ -144,44 +167,56 @@ const Home = ({
 			<div className="galaxy-wrapper home-wrapper">
 				<div className="home-fit" ref={fitRef}>
 					<div className="home-pad home-pad--top" />
-					<div className={`home-grid${showReviews ? " home-grid--reviews" : ""}`}>
+					<div
+						className="home-grid"
+						style={{
+							gridTemplateAreas: layout.areas.map((row) => `"${row}"`).join(" "),
+							gridTemplateRows: layout.rows,
+						}}
+					>
 						{/* Onglets principaux */}
-						<div className="home-card home-tabs">
-							{mainLinks.map((link) => (
-								<a
-									key={`${link.label}-${link.path}`}
-									className={`home-nav-btn${link.path === "{{today}}" ? " home-nav-btn--today" : ""}`}
-									onClick={() => openLink(link.path)}
-									{...middleClick(() => openLink(link.path))}
-								>
-									{link.label}
-									{link.badge === "due-cards" && <DueBadge />}
-								</a>
-							))}
-						</div>
+						{showTabs && (
+							<div className="home-card home-tabs">
+								{mainLinks.map((link) => (
+									<a
+										key={`${link.label}-${link.path}`}
+										className={`home-nav-btn${link.path === "{{today}}" ? " home-nav-btn--today" : ""}`}
+										onClick={() => openLink(link.path)}
+										{...middleClick(() => openLink(link.path))}
+									>
+										{link.label}
+										{link.badge === "due-cards" && <DueBadge />}
+									</a>
+								))}
+							</div>
+						)}
 
 						{/* Heure + salutation */}
-						<div className="galaxy-center home-center">
-							<Clock
-								timeFormat={settings.timeFormat}
-								dateLanguage={settings.dateLanguage}
-								showDate={false}
-								className="home-time"
-							/>
-							<div className="galaxy-greeting">
-								{settings.greetingText
-									.replace(/{{greeting}}/gi, getTimeOfDayGreeting())
-									.replace(
-										/{{name}}/gi,
-										settings.userName || "explorer"
-									)}
+						{settings.showHomeClock && (
+							<div className="galaxy-center home-center">
+								<Clock
+									timeFormat={settings.timeFormat}
+									dateLanguage={settings.dateLanguage}
+									showDate={false}
+									className="home-time"
+								/>
+								<div className="galaxy-greeting">
+									{settings.greetingText
+										.replace(/{{greeting}}/gi, getTimeOfDayGreeting())
+										.replace(
+											/{{name}}/gi,
+											settings.userName || "explorer"
+										)}
+								</div>
 							</div>
-						</div>
+						)}
 
-						<DateCard language={settings.dateLanguage} />
+						{settings.showHomeDate && (
+							<DateCard language={settings.dateLanguage} onOpen={openToday} />
+						)}
 
 						{/* Groupes de liens (MIAGE…) : liste qui défile */}
-						{groupRows.length > 0 && (
+						{showGroups && (
 							<div className="home-card home-groups">
 								<div className="home-card-title">
 									{groupRows.length === 1
@@ -222,33 +257,47 @@ const Home = ({
 
 						{/* Graphiques */}
 						{settings.showDataNerds && (
-							<DataNerds counts={counts} root={settings.domainsFolder} />
+							<DataNerds
+									counts={counts}
+									root={settings.domainsFolder}
+									reviews={
+										settings.dataCurve === "reviews" && reviewStats
+											? {
+													stats: reviewStats,
+													onSettings: (patch) =>
+														void setReviewSettings(obsidian, patch),
+												}
+											: null
+									}
+								/>
 						)}
 
 						{/* Notes récentes : liste qui défile */}
-						<div className="home-card home-recent">
-							<div className="home-card-title">
-								<Icon name="clock" />
-								<span>Récents</span>
-							</div>
-							<div className="home-scroll">
-								<div className="home-list">
-									{latestFiles.map((file) => (
-										<a
-											key={file.path}
-											className="home-list-row"
-											onClick={() => openTFile(file)}
-											{...middleClick(() => openTFile(file))}
-										>
-											<Icon name="file" />
-											<span className="home-list-name">
-												{file.basename}
-											</span>
-										</a>
-									))}
+						{settings.showHomeRecent && (
+							<div className="home-card home-recent">
+								<div className="home-card-title">
+									<Icon name="clock" />
+									<span>Récents</span>
+								</div>
+								<div className="home-scroll">
+									<div className="home-list">
+										{latestFiles.map((file) => (
+											<a
+												key={file.path}
+												className="home-list-row"
+												onClick={() => openTFile(file)}
+												{...middleClick(() => openTFile(file))}
+											>
+												<Icon name="file" />
+												<span className="home-list-name">
+													{file.basename}
+												</span>
+											</a>
+										))}
+									</div>
 								</div>
 							</div>
-						</div>
+						)}
 
 						{/* Révisions : réponses journalisées par SR Review Log */}
 						{showReviews && reviewStats && (

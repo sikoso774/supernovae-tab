@@ -80,15 +80,8 @@
 		grid-area: recent;
 	}
 
-	// With the reviews band: the calendar and the data card keep the middle row,
-	// the band takes the bottom row under both of them
-	.home-grid--reviews {
-		grid-template-rows: auto auto minmax(0, 1fr);
-		grid-template-areas:
-			"tabs clock date"
-			"groups activity data"
-			"recent reviews reviews";
-	}
+	// The areas and rows are set by Home.tsx from the blocks that are shown (see homeLayout.ts);
+	// the template above is only the default
 
 	/* ── Cartes « verre » ────────────────────────── */
 	.home-card {
@@ -221,6 +214,24 @@
 		padding: 14px 16px 16px;
 		text-align: center;
 		font-family: "Supernovae Orbitron", "Orbitron", monospace;
+
+		&.is-clickable {
+			cursor: pointer;
+			transition:
+				background 0.15s,
+				border-color 0.15s,
+				box-shadow 0.15s;
+
+			&:hover,
+			&:focus-visible {
+				background: rgba(70, 110, 255, 0.18);
+				border-color: rgba(100, 150, 255, 0.38);
+				box-shadow:
+					0 0 28px rgba(70, 110, 255, 0.28),
+					inset 0 1px 0 rgba(255, 255, 255, 0.06);
+				outline: none;
+			}
+		}
 	}
 
 	.date-weekday {
@@ -647,9 +658,53 @@
 
 	/* ── DATA NERDS : courbe + anneau ────────────── */
 	.home-data {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		gap: 14px;
+	}
+
+	// Review curve: chips and goal link under the caption, the goal as a dashed line
+	.data-sub {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		font-size: 0.66rem;
+		color: rgba(150, 180, 255, 0.6);
+
+		.rev-range {
+			font-size: 0.66rem;
+		}
+	}
+
+	.data-line.is-clickable {
+		cursor: pointer;
+	}
+
+	.data-area--rev {
+		fill: url(#data-area-fill-rev);
+	}
+
+	.data-goal {
+		fill: none;
+		stroke: rgba(255, 211, 110, 0.6);
+		stroke-width: 1.2;
+		stroke-dasharray: 4 3;
+		pointer-events: none;
+	}
+
+	.data-dot.is-goal {
+		fill: #ffe9a8;
+		stroke: #ffd36e;
+	}
+
+	// The goal panel opened from the data card: wide enough for the weekday mode, so it extends leftwards
+	.rev-goal-pop--end {
+		left: auto;
+		right: 14px;
+		width: 380px;
+		max-width: none;
 	}
 
 	.data-block {
