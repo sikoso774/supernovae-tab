@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2026-11-24
+
+### Added
+- **Every block of the Home page has its own switch** in *Settings → Home dashboard*: navigation buttons,
+  clock and greeting, date card, link groups, writing activity, data panel, recent notes and the reviews band.
+  The grid is rebuilt for the blocks that are shown: a column with one card gives it both rows, the header row
+  disappears when it is empty, and the reviews band keeps the last row. Navigation buttons and link groups are
+  also hidden by themselves when there is no link for them.
+- **The data card can show the review answers per day** instead of the notes created per month (setting
+  *Data panel curve*, notes by default). One point per day over 7, 14 or 30 days with the daily goal as a
+  dashed line, the *7 j / 14 j / 30 j* chips and an *objectif N ✎* link; clicking the curve opens the same goal
+  panel as the reviews band. Without the SR Review Log plugin the notes curve is shown.
+- **Setting *Show recent notes*** for the *Recent* list (on by default).
+- **Click the date card to open today's daily note.** If it does not exist yet it is created from a Templater
+  template, so it comes out filled in; without Templater, or if the template is not found, an empty note is
+  created and a message says why. The *{{today}}* navigation link (*Aujourd'hui*) does the same instead of
+  saying that the note was not found. Two new settings: *Daily note folder* (`{{YYYY}}`, `{{MM}}` and `{{DD}}`
+  follow the day, default `05 - Journaling/{{YYYY}}`) and *Daily note template* (default
+  `06 - Templates/Journal - Galaxy`).
+
+### Changed
+- The date card looks clickable (pointer, glow on hover, tooltip).
+
 ## [1.9.0] - 2026-11-20
 
 ### Added

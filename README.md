@@ -30,17 +30,17 @@ Every new empty tab is replaced by the galaxy view:
 Create a note named `Home.md` in your vault. Whenever you open it, Supernovae Tab intercepts the navigation and displays a dedicated Home Dashboard instead:
 
 - Same galaxy background as the new tab
-- **Three-column layout** that scales itself to the window (side panels open or not): main tabs, clock, date card, link groups, recent notes, streak and calendar, data card
+- **Three-column layout** that scales itself to the window (side panels open or not): main tabs, clock, date card, link groups, recent notes, streak and calendar, data card. **Each block has its own switch** in the settings and the grid adapts to the ones you keep
 - **Navigation buttons** — configurable links to your key notes and folders, or to any Obsidian command (path `command:<id>`)
 - **Recent files** — your 5 most recently edited notes, in a scrolling list
 - **Writing streak and calendar** — a big "days in a row" counter and a one-square-per-day calendar of the notes you created (hover for details, click to open the day's journal note)
 - **Link groups** — navigation links sharing a group are listed together in a scrolling card (e.g. *Cursus MIAGE*)
-- **Data card (DATA NERDS)** — notes created per month (line) and notes per domain (donut), from the sub-folders of a folder you choose
+- **Data card (DATA NERDS)** — notes created per month, or your review answers per day (line), and notes per domain (donut), from the sub-folders of a folder you choose
 - **Reviews band** — today's Spaced Repetition answers, the last 14 days, the weakest decks (click to review one) and the cards that keep failing, with a daily goal you can set on the fly, from the [SR Review Log](#home-dashboard--reviews-band) plugin
 - **Flashcards badge** — optional counter of Spaced Repetition cards to review (due or new) on a navigation button
 - **Tab protection** — the Home tab is pinned, and every note chosen in the dashboard (click or middle click) opens in a tab of its own, preserving the Home view; only a `command:` link, such as *Révision*, does not open a tab
 
-> **Tip:** Use `{{today}}` as a navigation link path to automatically open today's daily note (format `YYYY-MM-DD`).
+> **Tip:** Use `{{today}}` as a navigation link path to open today's daily note (format `YYYY-MM-DD`). Clicking the date card does the same. A missing note is created from a Templater template (settings *Daily note folder* and *Daily note template*).
 
 A pencil button (✏️) in the view header lets you edit `Home.md` directly without leaving the dashboard workflow.
 
@@ -82,7 +82,7 @@ All settings are available under **Settings → Supernovae Tab**.
 | **Greeting** | Your name (used via `{{name}}`); show/hide greeting; custom greeting text |
 | **Recent files** | Show/hide the recent files section |
 | **Bookmarks** | Show/hide bookmarks; display all bookmarks or a specific group |
-| **Home Dashboard** | Take over `Home.md` (on/off); pin the Home tab (on by default); show/hide the writing activity and the data panel; folder whose sub-folders are the domains; edit the navigation links (label, path or `command:<id>`, group, due-cards badge) |
+| **Home Dashboard** | Take over `Home.md` (on/off); pin the Home tab (on by default); show/hide each block (navigation buttons, clock and greeting, date card, link groups, writing activity, data panel, recent notes, reviews band); curve of the data panel; folder and Templater template of the daily note; folder whose sub-folders are the domains; edit the navigation links (label, path or `command:<id>`, group, due-cards badge) |
 | **Quotes** | Show/hide quotes; choose between built-in quotes, your own, or both |
 
 ### Greeting placeholders
@@ -134,7 +134,7 @@ The dashboard shows how regularly you write. Each note counts once, on the day g
 
 The **DATA NERDS** card shows two charts, drawn as plain SVG (no chart library, no file is read):
 
-- **Notes created per month** over the last twelve months, from the same `Date` / `created` / `création` property as the writing calendar.
+- **Notes created per month** over the last twelve months, from the same `Date` / `created` / `création` property as the writing calendar. With the [SR Review Log](#home-dashboard--reviews-band) plugin, the **Data panel curve** setting can show your **review answers per day** instead (7, 14 or 30 days, with your daily goal as a dashed line; click it to change the goal).
 - **Notes per domain**: a donut with one slice per sub-folder of the **Domains folder** setting (default `03 - CONTENTS`; the leading number of a folder name is dropped, so `02-Code` reads *Code*). The six biggest domains are listed, the rest is grouped as *Autres*.
 
 Hover a point or a slice for its figures. Turn the card off with **Settings → Supernovae Tab → Show data panel**.
